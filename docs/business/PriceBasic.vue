@@ -1,19 +1,37 @@
 <script setup lang="ts">
-// PriceBasic - 价格基础组件
+// PriceBasic - 价格展示组件
+// figma-node: 17485:222826
 defineProps<{
-  price?: string
-  size?: 'small' | 'medium' | 'large'
+  price: string | number
+  unit?: string
+  size?: 'small' | 'normal' | 'large'
+  color?: string
 }>()
 </script>
 
 <template>
-  <div class="flex items-baseline">
-    <span class="text-[#f96464] font-[500]" :class="{
-      'text-[12px]': size === 'small',
-      'text-[14px]': size === 'medium' || !size,
-      'text-[16px]': size === 'large'
-    }">
-      ¥{{ price || '0' }}
-    </span>
+  <div class="flex gap-[2px] items-center">
+    <span
+      class="font-[500]"
+      :class="[
+        size === 'small' ? 'text-[10px] leading-[11px]' : size === 'large' ? 'text-[16px] leading-[24px]' : 'text-[12px] leading-[18px]',
+        color ? `text-[${color}]` : 'text-black'
+      ]"
+    >¥</span>
+    <span
+      class="font-[500]"
+      :class="[
+        size === 'small' ? 'text-[12px] leading-[18px]' : size === 'large' ? 'text-[20px] leading-[26px]' : 'text-[16px] leading-[24px]',
+        color ? `text-[${color}]` : 'text-black'
+      ]"
+    >{{ price }}</span>
+    <span
+      v-if="unit"
+      class="font-[500]"
+      :class="[
+        size === 'small' ? 'text-[10px] leading-[11px]' : size === 'large' ? 'text-[16px] leading-[24px]' : 'text-[12px] leading-[18px]',
+        color ? `text-[${color}]` : 'text-black'
+      ]"
+    >{{ unit }}</span>
   </div>
 </template>

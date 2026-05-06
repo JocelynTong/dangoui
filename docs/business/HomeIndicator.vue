@@ -1,11 +1,15 @@
 <script setup lang="ts">
-// HomeIndicator - 主页指示器
+// HomeIndicator - 底部指示器
 defineProps<{
-  theme?: 'light' | 'dark'
+  color?: 'white' | 'black'
 }>()
 </script>
 
 <template>
-  <!-- figma-node: 17491:161546 -->
-  <div class="w-[134px] h-[5px] rounded-[3px]" :class="theme === 'dark' ? 'bg-white' : 'bg-black'" />
+  <div class="flex justify-center items-center h-[34px] pb-[8px]">
+    <div
+      class="w-[134px] h-[5px] rounded-full"
+      :class="color === 'white' ? 'bg-white' : 'bg-black'"
+    />
+  </div>
 </template>

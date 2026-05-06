@@ -3,13 +3,19 @@
 defineProps<{
   placeholder?: string
 }>()
+
+const emit = defineEmits<{
+  click: []
+}>()
 </script>
 
 <template>
-  <!-- figma-node: 17567:44841 -->
-  <div class="flex-1 bg-white/20 rounded-[8px] px-[8px] py-[6px] flex items-center gap-[8px]">
+  <div
+    class="bg-[rgba(255,255,255,0.12)] rounded-[8px] flex items-center gap-[8px] px-[12px] py-[8px] cursor-pointer"
+    @click="emit('click')"
+  >
     <slot name="left" />
-    <span class="text-white/60 text-[14px] flex-1">{{ placeholder }}</span>
+    <span class="text-[rgba(255,255,255,0.4)] text-[14px] flex-1">{{ placeholder }}</span>
     <slot name="right" />
   </div>
 </template>

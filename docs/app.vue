@@ -11,6 +11,7 @@ import '@/assets/index.css'
 import '@/assets/github-markdown-light.css'
 import 'dangoui/style.css'
 import 'dangoui/theme.css'
+import '@/assets/design-tokens.css'
 import 'tippy.js/dist/tippy.css'
 import { globalTheme, currentApp, isDarkMode } from '~/composables/dumpling'
 

@@ -1,14 +1,19 @@
 <script setup lang="ts">
-// IslandsPin - 底部 TabBar 容器
-defineProps<{
-  tabs?: Array<{ id: string; name: string; icon?: string; badge?: number | string }>
-  activeTab?: string
-}>()
+// IslandsPin - 岛入口横滑容器
 </script>
 
 <template>
-  <!-- figma-node: 14210:714253 -->
-  <div class="bg-white b-t-1 b-t-solid b-hex-0000001f flex justify-around items-center h-[50px]">
+  <div class="flex gap-[4px] overflow-x-auto scrollbar-hide">
     <slot />
   </div>
 </template>
+
+<style scoped>
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>

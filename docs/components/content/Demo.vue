@@ -49,7 +49,10 @@
         <slot />
       </div>
       <div class="not-prose overflow-auto w-full">
-        <slot name="snippet" />
+        <slot name="snippet">
+          <!-- 没有 slot 内容时，显示自动加载的代码 -->
+          <pre v-if="snippetCode" class="shiki min-light"><code v-html="snippetCode" /></pre>
+        </slot>
       </div>
     </div>
   </section>
@@ -116,7 +119,7 @@ const demoPath = computed(() => {
     'other': '6.other',
     'composables': '7.composables',
     'get-started': '0.get-started',
-    'business': 'business',
+    'business': '8.business',
   }
   const category = categoryMap[categoryPart] ?? categoryPart
 
@@ -125,6 +128,35 @@ const demoPath = computed(() => {
 
 const logs = ref<string[]>([])
 const consoleOpen = ref(false)
+
+// 自动加载 snippet 代码
+const snippetCode = ref('')
+const snippetFilePath = computed(() => {
+  const p = props.path
+    .replace(/^content:/, '')
+    .replace(/:(\d+)$/, '')
+    .replace(/\.md$/, '')
+
+  const colonIdx = p.lastIndexOf(':')
+  const categoryPart = p.substring(0, colonIdx)
+  const filenameWithExt = p.substring(colonIdx + 1)
+  const filename = filenameWithExt.replace(/^(\d+)\./, '')
+
+  const categoryMap: Record<string, string> = {
+    'bar': '2.bar',
+    'style': '1.style',
+    'form': '3.form',
+    'data': '4.data',
+    'feedback': '5.feedback',
+    'other': '6.other',
+    'composables': '7.composables',
+    'get-started': '0.get-started',
+    'business': '8.business',
+  }
+  const category = categoryMap[categoryPart] ?? categoryPart
+
+  return `pages/demos/${category}/${filename}/snippet${props.idx}.vue`
+})
 
 watch(globalTheme, (theme) => {
   iframe.value?.contentWindow?.postMessage(
@@ -136,7 +168,21 @@ watch(globalTheme, (theme) => {
   )
 })
 
-onMounted(() => {
+onMounted(async () => {
+  // 加载 snippet 代码
+  try {
+    const code = await $fetch<string>('/api/snippet', {
+      query: { path: snippetFilePath.value }
+    })
+    snippetCode.value = code
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+  } catch (e) {
+    // 加载失败时保持空
+  }
+
+  // 监听 console 消息
   window.addEventListener('message', (message) => {
     if (message.source !== iframe.value?.contentWindow) {
       return

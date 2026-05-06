@@ -3,8 +3,7 @@
 </script>
 
 <template>
-  <!-- figma-node: 3549:174311 -->
-  <div class="flex flex-col gap-[4px]">
+  <div class="flex flex-col gap-[8px]">
     <slot />
   </div>
 </template>
