@@ -3,7 +3,6 @@
 </script>
 
 <template>
-  <!-- figma-node: 14202:601976 -->
   <div class="flex gap-[8px] overflow-x-auto scrollbar-hide">
     <slot />
   </div>

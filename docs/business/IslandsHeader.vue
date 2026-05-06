@@ -1,10 +1,9 @@
 <script setup lang="ts">
-// IslandsHeader - 顶部导航栏容器
+// IslandsHeader - 岛页面头部容器
 </script>
 
 <template>
-  <!-- figma-node: 14202:599741 -->
-  <div class="bg-[#2b263b]">
+  <div class="flex flex-col">
     <slot />
   </div>
 </template>

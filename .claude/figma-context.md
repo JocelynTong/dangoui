@@ -51,6 +51,9 @@ import { DuForm, DuFormItem, DuPopup, DuTag, DuSwitch, DuTextarea, DuUpload } fr
 
 | IslandsPin* | `IslandsPin` | docs/business/IslandsPin.vue | 已生成 |
 | IslandsPinBasic* | `IslandsPinBasic` | docs/business/IslandsPinBasic.vue | 已生成 |
+| Price* | `PriceBasic` | docs/business/PriceBasic.vue | 已生成 |
+| TabBar* | `TabBar` | docs/business/TabBar.vue | 已生成 |
+| ButtonFAB* | `ButtonFAB` | docs/business/ButtonFAB.vue | 已生成 |
 | IslandsHeader* | `IslandsHeader` | docs/business/IslandsHeader.vue | 已生成 |
 | NavigationBar* | `NavigationBar` | docs/business/NavigationBar.vue | 已生成 |
 | IconIslands* | `IconIslands` | docs/business/IconIslands.vue | 已生成 |

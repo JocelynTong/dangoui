@@ -1,8 +1,9 @@
 <script setup lang="ts">
-// IconIslands - 岛屿 Logo 图标
+// IconIslands - 岛图标
 </script>
 
 <template>
-  <!-- figma-node: 17567:42678 -->
-  <div class="w-[16px] h-[16px] bg-[#2b263b] rounded-full" />
+  <div class="w-[24px] h-[24px] bg-white rounded-[4px] flex items-center justify-center">
+    <span class="text-[12px]">🏝️</span>
+  </div>
 </template>

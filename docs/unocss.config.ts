@@ -1,8 +1,54 @@
 import { defineConfig, presetUno, presetTypography, presetIcons } from 'unocss'
 
 export default defineConfig({
+  // 文字样式快捷方式（与生产环境一致）
+  shortcuts: {
+    'text-h1': 'text-24px font-500 leading-30px',
+    'text-h2': 'text-20px font-500 leading-26px',
+    'text-h3': 'text-18px font-500 leading-25px',
+    'text-h4': 'text-16px font-500 leading-24px',
+    'text-h5': 'text-14px font-500 leading-22px',
+    'text-h6': 'text-12px font-500 leading-18px',
+    'text-h7': 'text-11px font-500 leading-13px',
+    'text-h8': 'text-10px font-500 leading-11px',
+
+    'text-b1': 'text-24px font-400 leading-30px',
+    'text-b2': 'text-20px font-400 leading-26px',
+    'text-b3': 'text-18px font-400 leading-25px',
+    'text-b4': 'text-16px font-400 leading-24px',
+    'text-b5': 'text-14px font-400 leading-22px',
+    'text-b6': 'text-12px font-400 leading-18px',
+    'text-b7': 'text-11px font-400 leading-13px',
+    'text-b8': 'text-10px font-400 leading-11px',
+
+    'text-n1': 'text-24px font-num font-500 leading-30px',
+    'text-n2': 'text-20px font-num font-500 leading-26px',
+    'text-n3': 'text-18px font-num font-500 leading-25px',
+    'text-n4': 'text-16px font-num font-500 leading-24px',
+    'text-n5': 'text-14px font-num font-500 leading-22px',
+    'text-n6': 'text-12px font-num font-500 leading-18px',
+    'text-n7': 'text-11px font-num font-500 leading-13px',
+    'text-n8': 'text-10px font-num font-500 leading-11px',
+
+    // 颜色 token（映射到 design-tokens.css 变量）
+    'c-text-1': 'text-[var(--text-1)]',
+    'c-text-2': 'text-[var(--text-2)]',
+    'c-text-3': 'text-[var(--text-3)]',
+    'c-text-disabled': 'text-[var(--text-disabled)]',
+    'bg-page': 'bg-[var(--bg-2)]',
+    'bg-1': 'bg-[var(--bg-1)]',
+    'bg-2': 'bg-[var(--bg-2)]',
+    'bg-3': 'bg-[var(--bg-3)]',
+    'bg-4': 'bg-[var(--bg-4)]',
+  },
+  rules: [
+    ['font-num', { 'font-family': 'Roboto' }],
+    // 动态颜色规则
+    [/^c-text-(\d)$/, ([, d]) => ({ color: `var(--text-${d})` })],
+    [/^bg-(\d)$/, ([, d]) => ({ 'background-color': `var(--bg-${d})` })],
+  ],
   presets: [
-    presetUno(), // required
+    presetUno(),
     presetIcons(),
     presetTypography({
       cssExtend: {

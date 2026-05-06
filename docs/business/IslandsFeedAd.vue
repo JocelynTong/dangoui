@@ -1,17 +1,15 @@
 <script setup lang="ts">
-// IslandsFeedAd - Feed 流广告卡片
-defineProps<{
-  image?: string
-  title?: string
-}>()
+// IslandsFeedAd - Feed 广告位
 </script>
 
 <template>
-  <!-- figma-node: 17282:11928 -->
-  <div class="rounded-[8px] overflow-hidden bg-[#f7f7f9]">
-    <div v-if="image" class="w-full h-[120px] bg-hex-cccccc" />
-    <div v-else class="w-full h-[120px] bg-hex-cccccc flex items-center justify-center">
-      <span class="text-[rgba(0,0,0,0.4)] text-[12px]">广告</span>
+  <div class="rounded-[8px] bg-gradient-to-br from-[#7c66ff] to-[#ad69f7] p-[12px] relative overflow-hidden">
+    <div class="flex gap-[4px] absolute top-[10px] left-[10px] right-[10px]">
+      <div class="h-[2px] bg-[rgba(255,255,255,0.4)] flex-1 rounded-full" />
+      <div class="h-[2px] bg-[rgba(255,255,255,0.4)] flex-1 rounded-full" />
+      <div class="h-[2px] bg-white flex-1 rounded-full" />
+      <div class="h-[2px] bg-[rgba(255,255,255,0.4)] flex-1 rounded-full" />
     </div>
+    <div class="h-[100px]" />
   </div>
 </template>

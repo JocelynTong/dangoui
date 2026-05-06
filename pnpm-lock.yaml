@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      '@frontend/figma-to-code':
-        specifier: ^0.7.0
-        version: 0.7.0
     devDependencies:
       '@changesets/cli':
         specifier: ^2.27.1
@@ -2877,11 +2873,6 @@ packages:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
-    dev: false
-
-  /@frontend/figma-to-code@0.7.0:
-    resolution: {integrity: sha1-8gyCo5rZAcJ3ej0YQDGHqP4Kays=, tarball: http://g.echo.tech/api/v4/projects/1455/packages/npm/@frontend/figma-to-code/-/@frontend/figma-to-code-0.7.0.tgz}
-    hasBin: true
     dev: false
 
   /@gar/promisify@1.1.3:

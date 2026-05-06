@@ -1,15 +1,20 @@
 <script setup lang="ts">
-// TabsBasic - Tab 标签单项
+// TabsBasic - 标签页单项
 defineProps<{
   active?: boolean
+}>()
+
+const emit = defineEmits<{
+  click: []
 }>()
 </script>
 
 <template>
-  <!-- figma-node: 17485:229365 -->
-  <div class="flex gap-[2px] justify-center items-center py-[3px] px-[10px] rounded-[4px]" :class="active ? 'bg-[#2b263b]' : ''">
-    <span class="text-[16px] leading-[24px]" :class="active ? 'text-black font-[500]' : 'text-[rgba(0,0,0,0.4)] font-[400]'">
-      <slot />
-    </span>
+  <div
+    class="px-[12px] py-[8px] rounded-[16px] cursor-pointer flex-shrink-0"
+    :class="active ? 'bg-[#2b263b] text-white' : 'bg-[#f7f7f9] text-[#2b263b]'"
+    @click="emit('click')"
+  >
+    <span class="text-[14px] font-[500]"><slot /></span>
   </div>
 </template>
