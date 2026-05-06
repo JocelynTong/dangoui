@@ -1,0 +1,512 @@
+import { describe, expect, it } from 'vitest'
+import { HTMLGenerator } from '../src/converter/generators/html-generator'
+import { VueGenerator } from '../src/converter/generators/vue-generator'
+import { ReactGenerator } from '../src/converter/generators/react-generator'
+import { FlutterGenerator } from '../src/converter/generators/flutter-generator'
+import { parseStyles } from '../src/converter/generators/style-parser'
+import type { ComponentNode } from '../src/converter/generators/types'
+
+describe('Code Generators', () => {
+  const mockComponentTree: ComponentNode = {
+    tag: 'div',
+    className: 'flex flex-col gap-2 p-4',
+    children: [
+      {
+        tag: 'span',
+        className: 'text-base font-medium',
+        text: '标题'
+      },
+      {
+        tag: 'div',
+        className: 'flex items-center',
+        children: []
+      }
+    ]
+  }
+
+  const mockStyles: Record<string, string> = {
+    'node-123': '  display: flex;\n  flex-direction: column;'
+  }
+
+  describe('HTMLGenerator', () => {
+    it('should generate HTML code with styles', () => {
+      const generator = new HTMLGenerator()
+      const code = generator.generate(mockComponentTree, mockStyles)
+
+      expect(code).toContain('<div class="flex flex-col gap-2 p-4">')
+      expect(code).toContain('<span class="text-base font-medium">标题</span>')
+      expect(code).toContain('<style>')
+      expect(code).toContain('.node-123')
+    })
+  })
+
+  describe('VueGenerator', () => {
+    it('should generate Vue component code', () => {
+      const generator = new VueGenerator()
+      const code = generator.generate(mockComponentTree, mockStyles)
+
+      expect(code).toContain('<script setup lang="ts">')
+      expect(code).toContain('<template>')
+      expect(code).toContain('<div class="flex flex-col gap-2 p-4">')
+      expect(code).toContain('<span class="text-base font-medium">标题</span>')
+      expect(code).toContain('<style scoped>')
+    })
+
+    it('should handle inline styles', () => {
+      const treeWithStyle: ComponentNode = {
+        tag: 'div',
+        style: { color: 'red', fontSize: '16px' }
+      }
+
+      const generator = new VueGenerator()
+      const code = generator.generate(treeWithStyle, {})
+
+      expect(code).toContain(':style')
+    })
+  })
+
+  describe('ReactGenerator', () => {
+    it('should generate React component code', () => {
+      const generator = new ReactGenerator()
+      const code = generator.generate(mockComponentTree, mockStyles)
+
+      expect(code).toContain('export function Component()')
+      expect(code).toContain('className="flex flex-col gap-2 p-4"')
+      expect(code).toContain('className="text-base font-medium"')
+      expect(code).toContain('标题')
+    })
+
+    it('should handle inline styles', () => {
+      const treeWithStyle: ComponentNode = {
+        tag: 'div',
+        style: { color: 'red', fontSize: '16px' }
+      }
+
+      const generator = new ReactGenerator()
+      const code = generator.generate(treeWithStyle, {})
+
+      expect(code).toContain('style=')
+    })
+  })
+
+  describe('FlutterGenerator', () => {
+    it('should generate Flutter Widget tree with Column layout', () => {
+      const generator = new FlutterGenerator()
+      const code = generator.generate(mockComponentTree, {})
+
+      expect(code).toContain('// Figma skeleton')
+      expect(code).toContain('Column(')
+      expect(code).toContain('spacing: 2')
+      expect(code).toContain("Text('标题'")
+    })
+
+    it('should convert hex colors to Flutter Color()', () => {
+      const tree: ComponentNode = {
+        tag: 'div',
+        className: 'bg-[#ff5500]',
+        children: []
+      }
+      const generator = new FlutterGenerator()
+      const code = generator.generate(tree, {})
+
+      expect(code).toContain('Color(0xFFFF5500)')
+    })
+
+    it('should convert rgba colors', () => {
+      const tree: ComponentNode = {
+        tag: 'span',
+        style: { color: 'rgba(0, 0, 0, 0.4)', 'font-size': '14px' },
+        text: '测试'
+      }
+      const generator = new FlutterGenerator()
+      const code = generator.generate(tree, {})
+
+      expect(code).toContain('Color(0x66000000)')
+      expect(code).toContain('fontSize: 14')
+    })
+
+    it('should generate Container with BoxDecoration for border-radius', () => {
+      const tree: ComponentNode = {
+        tag: 'div',
+        style: {
+          'background-color': '#ffffff',
+          'border-radius': '15px 15px 0px 0px',
+          padding: '16px 15px'
+        },
+        children: [{ tag: 'span', text: '内容' }]
+      }
+      const generator = new FlutterGenerator()
+      const code = generator.generate(tree, {})
+
+      expect(code).toContain('Container(')
+      expect(code).toContain('BoxDecoration(')
+      expect(code).toContain('BorderRadius.only(')
+      expect(code).toContain('Radius.circular(15)')
+      expect(code).toContain('EdgeInsets.symmetric(horizontal: 15, vertical: 16)')
+    })
+
+    it('should generate Row for flex row layout', () => {
+      const tree: ComponentNode = {
+        tag: 'div',
+        className: 'flex gap-[8px] items-center',
+        children: [
+          { tag: 'span', text: '左' },
+          { tag: 'span', text: '右' }
+        ]
+      }
+      const generator = new FlutterGenerator()
+      const code = generator.generate(tree, {})
+
+      expect(code).toContain('Row(')
+      expect(code).toContain('spacing: 8')
+      expect(code).toContain('crossAxisAlignment: CrossAxisAlignment.center')
+    })
+
+    it('should generate INSTANCE node with comment', () => {
+      const tree: ComponentNode = {
+        tag: 'FormItemLine',
+        componentId: '123:456',
+        className: 'bg-white'
+      }
+      const generator = new FlutterGenerator()
+      const code = generator.generate(tree, {})
+
+      expect(code).toContain('FormItemLine()')
+      expect(code).toContain('// INSTANCE figma-node: 123:456')
+    })
+
+    it('emits kuril_components import when any mapped component uses it', () => {
+      const tree: ComponentNode = {
+        tag: 'div',
+        parsedStyles: { layout: { direction: 'row', gap: 0 } },
+        children: [
+          {
+            tag: 'EchoButton',
+            componentId: '41098:23190',
+            componentDocLink: 'https://echotech.feishu.cn/wiki/wikcn6DYhscLhzWh04ykmofoI4e',
+          },
+          {
+            tag: 'EchoDivider',
+            componentId: '26553:168119',
+            componentDocLink: 'kuril_components/lib/src/echo_divider/echo_divider.dart',
+          },
+        ],
+      }
+      const code = new FlutterGenerator().generate(tree, {})
+      expect(code).toContain("import 'package:kuril_components/kuril_components.dart';")
+      expect(code).toContain('doc: kuril_components/lib/src/echo_divider/echo_divider.dart')
+      // feishu wiki 被归入"未知"区块
+      expect(code).toContain('未在公共库 kuril_components')
+      expect(code).toContain('echotech.feishu.cn')
+    })
+
+    it('emits instanceTextOverrides as trailing texts comment', () => {
+      const tree: ComponentNode = {
+        tag: 'PspuCard',
+        componentId: 'card-001',
+        semanticName: 'PspuCard',
+        instanceTextOverrides: [
+          { name: 'Title', text: '暗黑破坏神4' },
+          { name: 'Subtitle', text: '跟车服务' }
+        ]
+      }
+      const code = new FlutterGenerator().generate(tree, {})
+      expect(code).toContain('texts: "暗黑破坏神4" / "跟车服务"')
+      expect(code).toContain('PspuCard()')
+    })
+
+    it('dedupes instanceTextOverrides that already exist in componentProps TEXT', () => {
+      const tree: ComponentNode = {
+        tag: 'EchoButton',
+        componentId: 'btn-001',
+        componentProps: {
+          Text: { type: 'TEXT', value: '立即购买' }
+        },
+        instanceTextOverrides: [
+          { name: 'Label', text: '立即购买' }, // 与 componentProps.Text 重复，跳过
+          { name: 'Subtitle', text: '限时优惠' }
+        ]
+      }
+      const code = new FlutterGenerator().generate(tree, {})
+      expect(code).toContain('texts: "限时优惠"')
+      expect(code).not.toMatch(/texts:.*"立即购买"/)
+    })
+
+    it('lists unmapped instance tags + project reference files in header', () => {
+      const tree: ComponentNode = {
+        tag: 'div',
+        parsedStyles: { layout: { direction: 'column', gap: 0 } },
+        children: [
+          {
+            tag: 'PspuCard',
+            componentId: 'biz-001',
+            isUnmappedInstance: true,
+          },
+          {
+            tag: 'CustomBanner',
+            componentId: 'biz-002',
+            isUnmappedInstance: true,
+          },
+        ],
+      }
+      const code = new FlutterGenerator({
+        projectReferenceFiles: ['CLAUDE.md', 'AGENTS.md']
+      }).generate(tree, {})
+      expect(code).toContain('未映射组件（annotation_config 未登记）')
+      expect(code).toContain('//   PspuCard')
+      expect(code).toContain('//   CustomBanner')
+      expect(code).toContain('Read 项目里的参考文档确认命名/用法')
+      expect(code).toContain('//   CLAUDE.md')
+      expect(code).toContain('//   AGENTS.md')
+      expect(code).toContain('⚠ 未映射')
+    })
+
+    it('warns when no reference files found in project', () => {
+      const tree: ComponentNode = {
+        tag: 'PspuCard',
+        componentId: 'biz-001',
+        isUnmappedInstance: true,
+      }
+      const code = new FlutterGenerator().generate(tree, {})
+      expect(code).toContain('未在项目根扫到 CLAUDE.md')
+    })
+
+    it('does not emit unmapped block when all instances are mapped', () => {
+      const tree: ComponentNode = {
+        tag: 'EchoButton',
+        componentId: 'mapped-001',
+        componentDocLink: 'kuril_components/lib/src/button/echo_button.dart',
+      }
+      const code = new FlutterGenerator().generate(tree, {})
+      expect(code).not.toContain('未映射组件')
+      expect(code).not.toContain('⚠ 未映射')
+    })
+
+    it('does not emit import when no mapped components present', () => {
+      const tree: ComponentNode = {
+        tag: 'div',
+        parsedStyles: { layout: { direction: 'row', gap: 0 } },
+        children: [
+          { tag: 'FormItemLine', componentId: '123:456' },
+        ],
+      }
+      const code = new FlutterGenerator().generate(tree, {})
+      expect(code).not.toContain('import ')
+      expect(code).not.toContain('未在公共库')
+    })
+
+    it('emits KurilLocalizations call for simple i18n key', () => {
+      const tree: ComponentNode = {
+        tag: 'span',
+        text: '提交',
+        i18nKey: 'Common.Submit'
+      }
+      const generator = new FlutterGenerator()
+      const code = generator.generate(tree, {})
+
+      expect(code).toContain('KurilLocalizationsManager.current(context).commonSubmit')
+    })
+
+    it('strips spaces in i18n key segment to match ARB identifier', () => {
+      const tree: ComponentNode = {
+        tag: 'span',
+        text: 'Apple signin',
+        i18nKey: 'LoginIn.Apple signin'
+      }
+      const code = new FlutterGenerator().generate(tree, {})
+      expect(code).toContain('KurilLocalizationsManager.current(context).loginInApplesignin')
+    })
+
+    it('strips punctuation in i18n key segment', () => {
+      const tree: ComponentNode = {
+        tag: 'span',
+        text: "Can't use the phone number?",
+        i18nKey: "LoginIn.Can't use the phone number?"
+      }
+      const code = new FlutterGenerator().generate(tree, {})
+      expect(code).toContain('KurilLocalizationsManager.current(context).loginInCantusethephonenumber')
+    })
+
+    it('should generate SizedBox for size-only nodes', () => {
+      const tree: ComponentNode = {
+        tag: 'div',
+        className: 'w-[100px] h-[50px]'
+      }
+      const generator = new FlutterGenerator()
+      const code = generator.generate(tree, {})
+
+      expect(code).toContain('width: 100')
+      expect(code).toContain('height: 50')
+    })
+
+    it('should handle justify-between', () => {
+      const tree: ComponentNode = {
+        tag: 'div',
+        className: 'flex justify-between items-center',
+        children: [
+          { tag: 'span', text: '年份' },
+          { tag: 'span', text: '2025' }
+        ]
+      }
+      const generator = new FlutterGenerator()
+      const code = generator.generate(tree, {})
+
+      expect(code).toContain('Row(')
+      expect(code).toContain('MainAxisAlignment.spaceBetween')
+      expect(code).toContain('CrossAxisAlignment.center')
+    })
+
+    it('emits SingleChildScrollView for heterogeneous horizontal scroll', () => {
+      const tree: ComponentNode = {
+        tag: 'div',
+        isScrollContainer: true,
+        scrollAxis: 'horizontal',
+        parsedStyles: { layout: { direction: 'row', gap: 12 }, width: 375, height: 120 },
+        children: [
+          { tag: 'Card', parsedStyles: { width: 200, height: 120 } },
+          { tag: 'Banner', parsedStyles: { width: 300, height: 120 } },
+          { tag: 'Promo', parsedStyles: { width: 250, height: 120 } },
+        ],
+      }
+      const code = new FlutterGenerator().generate(tree, {})
+      expect(code).toContain('SingleChildScrollView(')
+      expect(code).toContain('scrollDirection: Axis.horizontal')
+      expect(code).toContain('Row(')
+      expect(code).toContain('spacing: 12')
+    })
+
+    it('emits ListView.builder for homogeneous long horizontal scroll', () => {
+      const tree: ComponentNode = {
+        tag: 'div',
+        isScrollContainer: true,
+        scrollAxis: 'horizontal',
+        parsedStyles: { layout: { direction: 'row', gap: 8 }, width: 375, height: 120 },
+        children: Array.from({ length: 6 }, () => ({
+          tag: 'CardItem',
+          parsedStyles: { width: 100, height: 120 },
+        })),
+      }
+      const code = new FlutterGenerator().generate(tree, {})
+      expect(code).toContain('ListView.builder(')
+      expect(code).toContain('itemCount: 6')
+      expect(code).toContain('itemBuilder:')
+      expect(code).toContain('SizedBox(')
+      expect(code).toContain('height: 120')
+    })
+
+    it('emits shrinkWrap + NeverScrollable for nested same-axis scroll', () => {
+      const inner: ComponentNode = {
+        tag: 'div',
+        isScrollContainer: true,
+        scrollAxis: 'horizontal',
+        parsedStyles: { layout: { direction: 'row', gap: 8 }, width: 900, height: 120 },
+        children: Array.from({ length: 5 }, () => ({
+          tag: 'Tile',
+          parsedStyles: { width: 80, height: 120 },
+        })),
+      }
+      const outer: ComponentNode = {
+        tag: 'div',
+        isScrollContainer: true,
+        scrollAxis: 'horizontal',
+        parsedStyles: { layout: { direction: 'row', gap: 0 }, width: 375, height: 400 },
+        children: [inner, inner, inner],
+      }
+      const code = new FlutterGenerator().generate(outer, {})
+      expect(code).toContain('shrinkWrap: true')
+      expect(code).toContain('NeverScrollableScrollPhysics()')
+    })
+  })
+})
+
+describe('StyleParser', () => {
+  it('should parse UnoCSS class names', () => {
+    const node: ComponentNode = {
+      tag: 'div',
+      className: 'flex flex-col gap-[12px] p-[16px] bg-[#ffffff]'
+    }
+    const parsed = parseStyles(node)
+
+    expect(parsed.layout).toBeDefined()
+    expect(parsed.layout!.direction).toBe('column')
+    expect(parsed.layout!.gap).toBe(12)
+    expect(parsed.padding).toEqual({ top: 16, right: 16, bottom: 16, left: 16 })
+    expect(parsed.backgroundColor).toBe('#ffffff')
+  })
+
+  it('should parse inline CSS styles', () => {
+    const node: ComponentNode = {
+      tag: 'div',
+      style: {
+        display: 'flex',
+        'flex-direction': 'column',
+        gap: '8px',
+        padding: '16px 15px',
+        'background-color': '#f5f5f5'
+      }
+    }
+    const parsed = parseStyles(node)
+
+    expect(parsed.layout!.direction).toBe('column')
+    expect(parsed.layout!.gap).toBe(8)
+    expect(parsed.padding).toEqual({ top: 16, right: 15, bottom: 16, left: 15 })
+    expect(parsed.backgroundColor).toBe('#f5f5f5')
+  })
+
+  it('should parse text styles', () => {
+    const node: ComponentNode = {
+      tag: 'span',
+      style: {
+        color: '#000000',
+        'font-size': '16px',
+        'font-weight': '500',
+        'line-height': '24px'
+      }
+    }
+    const parsed = parseStyles(node)
+
+    expect(parsed.text).toBeDefined()
+    expect(parsed.text!.color).toBe('#000000')
+    expect(parsed.text!.fontSize).toBe(16)
+    expect(parsed.text!.fontWeight).toBe(500)
+    expect(parsed.text!.lineHeight).toBe(24)
+  })
+
+  it('should parse border-radius with 4 values', () => {
+    const node: ComponentNode = {
+      tag: 'div',
+      style: { 'border-radius': '15px 15px 0px 0px' }
+    }
+    const parsed = parseStyles(node)
+
+    expect(parsed.borderRadius).toEqual({
+      topLeft: 15, topRight: 15, bottomRight: 0, bottomLeft: 0
+    })
+  })
+
+  it('should merge className and style (className wins)', () => {
+    const node: ComponentNode = {
+      tag: 'div',
+      className: 'bg-[#ff0000]',
+      style: { 'background-color': '#00ff00' }
+    }
+    const parsed = parseStyles(node)
+
+    expect(parsed.backgroundColor).toBe('#ff0000')
+  })
+
+  it('should parse position absolute', () => {
+    const node: ComponentNode = {
+      tag: 'div',
+      style: {
+        position: 'absolute',
+        top: '10px',
+        left: '20px'
+      }
+    }
+    const parsed = parseStyles(node)
+
+    expect(parsed.position).toBe('absolute')
+    expect(parsed.positionOffsets).toEqual({ top: '10px', left: '20px' })
+  })
+})

@@ -5832,13 +5832,6 @@
         ],
         "events": [
             {
-                "name": "add",
-                "type": "[]",
-                "signature": "(event: \"add\"): void",
-                "declarations": [],
-                "schema": []
-            },
-            {
                 "name": "remove",
                 "type": "[payload: { value: string | number; }]",
                 "signature": "(event: \"remove\", payload: { value: string | number; }): void",
@@ -5868,6 +5861,13 @@
                         }
                     }
                 ]
+            },
+            {
+                "name": "add",
+                "type": "[]",
+                "signature": "(event: \"add\"): void",
+                "declarations": [],
+                "schema": []
             }
         ],
         "slots": [

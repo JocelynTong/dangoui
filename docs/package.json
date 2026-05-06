@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "@floating-ui/vue": "^1.0.2",
+    "@iconify-json/lucide": "^1.2.104",
     "@iconify-json/mdi": "^1.1.55",
+    "@iconify-json/ph": "^1.2.2",
     "@nuxt/content": "npm:@nuxt/content-edge@latest",
     "@nuxt/kit": "^3.8.2",
     "@unocss/reset": "^0.57.7",

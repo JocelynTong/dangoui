@@ -1,0 +1,38 @@
+stages:
+  - build
+  - publish
+
+variables:
+  NPM_TOKEN: "${CI_JOB_TOKEN}"
+
+build:
+  stage: build
+  image: node:20-alpine
+  before_script:
+    - corepack enable
+    - pnpm install --frozen-lockfile
+  script:
+    - pnpm build
+  artifacts:
+    paths:
+      - dist
+      - .claude
+      - template
+      - tokens
+    expire_in: 1 day
+
+publish:
+  stage: publish
+  image: node:20-alpine
+  before_script:
+    - corepack enable
+    - pnpm install --frozen-lockfile
+  script:
+    - echo "//g.echo.tech/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" > .npmrc
+    - pnpm build
+    - pnpm publish
+  only:
+    - tags
+  needs:
+    - job: build
+      artifacts: true
