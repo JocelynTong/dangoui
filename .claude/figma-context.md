@@ -1,23 +1,7 @@
-# 项目 Figma 规范 - DangoUI
+# 项目 Figma 规范
 
-> 基于 dangoui@3.6.14 自动生成，可手动补充修改。
-
----
-
-## 组件库
-
-**包名**：`dangoui`
-**前缀**：`Du`（`<DuButton>` 和 `<Button>` 均可，统一用 `Du` 前缀）
-
-### 组件引入
-
-按需引入，在 `<script setup>` 顶部添加 import，**只引入当前文件实际用到的组件**：
-
-```ts
-// 示例：按需引入，不要全量引入
-import { DuButton, DuInput, DuIcon, DuSelect, DuDivider } from 'dangoui'
-import { DuForm, DuFormItem, DuPopup, DuTag, DuSwitch, DuTextarea, DuUpload } from 'dangoui'
-```
+> 此文件由 `figma-to-code init --ui=dangoui` 生成。
+> 组件库规则在 `.claude/figma-base/` 目录，可通过 `figma-to-code update` 更新。
 
 ---
 
@@ -33,680 +17,73 @@ import { DuForm, DuFormItem, DuPopup, DuTag, DuSwitch, DuTextarea, DuUpload } fr
 
 | Figma 组件名（模糊匹配） | 项目组件 | 文件路径 | 备注 |
 |---|---|---|---|
-| icon/* / Icon* / Arrow* / Chevron* / Close* | `DuIcon` | - | 基础组件 |
-| Button* / Btn* / Submit* | `DuButton` | - | 基础组件 |
-| Input* / InputFrame* / TextField* | `DuInput` | - | 基础组件 |
-| Textarea* | `DuTextarea` | - | 基础组件 |
-| FormItem* | `DuFormItem` | - | 基础组件 |
-| Picker* / DatePicker* / Select* / Dropdown* | `DuSelect` | - | 基础组件 |
-| Divider* / Line* / Separator* | `DuDivider` | - | 基础组件 |
-| Popup* / Sheet* / BottomSheet* | `DuPopup` | - | 基础组件 |
-| Tag* | `DuTag` | - | 基础组件 |
-| Switch* | `DuSwitch` | - | 基础组件 |
-| Upload* | `DuUpload` | - | 基础组件 |
-
-<!-- 每次递归生成新组件后，在此补充一行，例如：
-| ProductCard | `ProductCard` | src/components/ProductCard.vue | 已生成 |
--->
-
-| IslandsPin* | `IslandsPin` | docs/business/IslandsPin.vue | 已生成 |
-| IslandsPinBasic* | `IslandsPinBasic` | docs/business/IslandsPinBasic.vue | 已生成 |
-| Price* | `PriceBasic` | docs/business/PriceBasic.vue | 已生成 |
-| TabBar* | `TabBar` | docs/business/TabBar.vue | 已生成 |
-| ButtonFAB* | `ButtonFAB` | docs/business/ButtonFAB.vue | 已生成 |
-| IslandsHeader* | `IslandsHeader` | docs/business/IslandsHeader.vue | 已生成 |
-| NavigationBar* | `NavigationBar` | docs/business/NavigationBar.vue | 已生成 |
-| IconIslands* | `IconIslands` | docs/business/IconIslands.vue | 已生成 |
-| SearchBar* | `SearchBar` | docs/business/SearchBar.vue | 已生成 |
-| ButtonIcon* | `ButtonIcon` | docs/business/ButtonIcon.vue | 已生成 |
-| IslandsGrid* | `IslandsGrid` | docs/business/IslandsGrid.vue | 已生成 |
-| IslandsGridBasic* | `IslandsGridBasic` | docs/business/IslandsGridBasic.vue | 已生成 |
-| IslandsSlide* | `IslandsSlide` | docs/business/IslandsSlide.vue | 已生成 |
-| IslandsSlideBasic* | `IslandsSlideBasic` | docs/business/IslandsSlideBasic.vue | 已生成 |
-| IslandsQuickEntry* | `IslandsQuickEntry` | docs/business/IslandsQuickEntry.vue | 已生成 |
-| IslandsQuickEntryTitle* | `IslandsQuickEntryTitle` | docs/business/IslandsQuickEntryTitle.vue | 已生成 |
-| IslandsQuickEntryInfo* | `IslandsQuickEntryInfo` | docs/business/IslandsQuickEntryInfo.vue | 已生成 |
-| IslandsFeed* | `IslandsFeed` | docs/business/IslandsFeed.vue | 已生成 |
-| TabsBasic* | `TabsBasic` | docs/business/TabsBasic.vue | 已生成 |
-| IslandsFeedAd* | `IslandsFeedAd` | docs/business/IslandsFeedAd.vue | 已生成 |
-| FeedPost* | `FeedPost` | docs/business/FeedPost.vue | 已生成 |
-| UserIsland* | `UserIsland` | docs/business/UserIsland.vue | 已生成 |
-| SPUBasic* | `SPUBasic` | docs/business/SPUBasic.vue | 已生成 |
-| SPU* | `SPU` | docs/business/SPU.vue | 已生成 |
-| island-detail | `IslandDetail` | docs/business/IslandDetail.vue | 已生成 |
-| StatusBar* | `StatusBar` | docs/business/StatusBar.vue | 已生成 |
-| HomeIndicator* | `HomeIndicator` | docs/business/HomeIndicator.vue | 已生成 |
-
----
-
-## 组件映射规则
-
-Figma 骨架中识别到 INSTANCE 节点时，按以下规则映射到 DangoUI 组件。
-
-### 图标
-
-| Figma 节点名含 | 组件 | 用法 |
-|---|---|---|
-| `Icon` / `Arrow` / `Chevron` / `Close` / `Search` | `<DuIcon>` | `<DuIcon name="arrow-right" :size="16" />` |
-
-- `name`：从节点名推断（如 `IconArrowRight` → `arrow-right`，转为 kebab-case）
-- `size`：从骨架的 `w-[Npx]` 读取数字
-- `color`：若骨架有颜色，转为 dangoui 色板名或直接用 hex
-
-```html
-<DuIcon name="arrow-right" :size="12" />
-<!-- color 可用色板名或 CSS 颜色值 -->
-<DuIcon name="close" :size="20" color="primary" />
-<DuIcon name="search" :size="20" extClass="custom-icon" />
-```
-
-**DuIcon props**：
-- `name`：图标名（iconfont 名或图片链接）
-- `size`：string | number
-- `color`：色板颜色名或 CSS 颜色值
-- `extClass`：自定义 class
-
-### 按钮
-
-| Figma 节点名含 | 组件 | 用法 |
-|---|---|---|
-| `Button` / `Btn` / `Submit` | `<DuButton>` | 见下方 |
-
-```html
-<!-- 主按钮，全宽 -->
-<DuButton color="primary" type="primary" size="large" full @click="handleSubmit">提交</DuButton>
-
-<!-- 描边按钮 -->
-<DuButton type="outline" color="primary" @click="fn">取消</DuButton>
-
-<!-- 文字按钮 -->
-<DuButton type="text" color="primary" @click="fn">查看详情</DuButton>
-
-<!-- 带图标 -->
-<DuButton color="primary" icon="arrow-right" iconPosition="right" @click="fn">下一步</DuButton>
-
-<!-- 加载中 -->
-<DuButton color="primary" :loading="submitting" full @click="handleSubmit">提交</DuButton>
-```
-
-**DuButton props**：
-- `color`：色板颜色名（primary / danger / warning 等）
-- `type`：`'text'` | `'primary'` | `'secondary'` | `'outline'`
-- `size`：`'small'` | `'mini'` | `'normal'` | `'medium'` | `'large'`
-- `full`：boolean，全宽
-- `loading`：boolean
-- `disabled`：boolean
-- `icon`：图标名
-- `iconPosition`：`'left'` | `'right'`
-- `arrowRight`：boolean
-- `extClass`：自定义 class
-
-### 输入框
-
-| Figma 节点名含 | 组件 | 用法 |
-|---|---|---|
-| `Input` / `InputFrame` / `TextField` | `<DuInput>` | 见下方 |
-| `FormItem` 且变体为 `Type=Input_frame`（无 label） | `<DuInput>` | 直接用，不套 DuForm |
-| `FormItem` 且有 label 文字 | `<DuFormItem>` + `<DuInput>` | 套 DuForm |
-| `Textarea` | `<DuTextarea>` | 见下方 |
-
-```html
-<!-- 外边框样式（bordered），适合独立输入框场景 -->
-<DuInput v-model:value="form.name" placeholder="请输入" bordered />
-
-<!-- 隐藏底部分割线（withoutBorder），适合自定义布局 -->
-<DuInput v-model:value="form.name" placeholder="请输入" withoutBorder />
-
-<!-- 默认样式（有底部分割线，不加 bordered / withoutBorder） -->
-<DuInput v-model:value="form.name" placeholder="请输入" />
-
-<!-- 带前缀文本 -->
-<DuInput v-model:value="form.phone" placeholder="请输入手机号" prefix="+86" />
-
-<!-- 带后缀文本 -->
-<DuInput v-model:value="form.amount" placeholder="请输入金额" suffix="元" />
-
-<!-- 带右侧图标 + 清除按钮 -->
-<DuInput v-model:value="form.search" placeholder="搜索" rightIcon="search" allowClear />
-
-<!-- 密码输入 -->
-<DuInput v-model:value="form.password" type="password" placeholder="请输入密码" />
-
-<!-- 多行文本 -->
-<DuTextarea v-model:value="form.desc" placeholder="请输入" :maxlength="200" showCount />
-
-<!-- 多行文本，带外边框 -->
-<DuTextarea v-model:value="form.desc" placeholder="请输入" bordered :maxlength="-1" />
-```
-
-**DuInput props**：
-- `v-model:value`
-- `type`：`'text'` | `'number'` | `'idcard'` | `'digit'` | `'password'`
-- `placeholder`
-- `bordered`：boolean，外边框样式（适合独立输入框）
-- `withoutBorder`：boolean，隐藏底部分割线
-- `disabled`
-- `maxlength`
-- `inputAlign`：文字对齐
-- `allowClear`：boolean，显示清除按钮
-- `rightIcon`：右侧图标名
-- `prefix`：前缀文本
-- `suffix`：后缀文本
-- `extClass`
-
-**DuTextarea props**：
-- `v-model:value`
-- `placeholder`
-- `bordered`：boolean
-- `showCount`：boolean
-- `maxlength`：number（-1 为无限制）
-
-### 选择器
-
-| Figma 节点名含 | 组件 | 用法 |
-|---|---|---|
-| `Picker` / `DatePicker` / `Select` / `Dropdown` | `<DuSelect>` | 见下方 |
-
-```html
-<!-- 基础选择器 -->
-<DuSelect
-  v-model:value="form.year"
-  v-model:open="yearPickerOpen"
-  :options="YEAR_OPTIONS"
-  title="选择年份"
-/>
-
-<!-- 多选 + 可搜索 -->
-<DuSelect
-  v-model:value="form.tags"
-  v-model:open="tagsOpen"
-  :options="TAG_OPTIONS"
-  title="选择标签"
-  mode="multiple"
-  filterable
-  withConfirm
-/>
-
-<!-- 在 DuFormItem 中使用，自动显示表单项样式 -->
-<DuSelect
-  v-model:value="form.bank"
-  v-model:open="bankOpen"
-  :options="BANK_OPTIONS"
-  title="选择银行"
-  formItem
-/>
-```
-
-**DuSelect props**：
-- `v-model:value`
-- `v-model:open`
-- `options`：`SelectOption[]`（`{ label, value, disabled? }`）
-- `title`：placeholder 兼弹出层标题
-- `mode`：`'multiple'`，多选
-- `filterable`：boolean，可搜索
-- `withConfirm`：boolean，带确认按钮
-- `formItem`：boolean，在 DuFormItem 中时自动显示表单项样式
-
-### 分割线
-
-| Figma 节点名含 | 组件 | 用法 |
-|---|---|---|
-| `Divider` / `Line` / `Separator` | `<DuDivider>` | `<DuDivider />` |
-
-```html
-<DuDivider />
-
-<!-- 垂直分割线 -->
-<DuDivider type="vertical" />
-
-<!-- 带颜色和长度 -->
-<DuDivider color="primary" length="80%" />
-
-<!-- 带间距 -->
-<DuDivider class="my-16" />
-```
-
-**DuDivider props**：
-- `color`
-- `type`：`'horizontal'` | `'vertical'`
-- `length`
-
-### 弹窗
-
-| Figma 节点名含 | 组件 | 用法 |
-|---|---|---|
-| `Popup` / `Sheet` / `BottomSheet` | `<DuPopup>` | 见下方 |
-
-```html
-<!-- 底部弹出，带标题栏和关闭按钮 -->
-<DuPopup
-  v-model:visible="popupVisible"
-  title="选择选项"
-  type="bottom"
-  headerVisible
-  closable
-  maskClick
-  safeArea
->
-  <!-- 内容 -->
-</DuPopup>
-
-<!-- 居中弹出，标题居中 -->
-<DuPopup
-  v-model:visible="centerPopupVisible"
-  title="提示"
-  type="center"
-  titleAlign="center"
-  headerVisible
-  closable
->
-  <!-- 内容 -->
-</DuPopup>
-
-<!-- 顶部弹出，不显示内置头部（自定义头部） -->
-<DuPopup
-  v-model:visible="topPopupVisible"
-  type="top"
-  :headerVisible="false"
-  :maskClick="false"
->
-  <!-- 自定义头部 + 内容 -->
-</DuPopup>
-```
-
-**DuPopup props**：
-- `v-model:visible`
-- `title`
-- `titleAlign`：`'center'` | `'default'`（default 左对齐）
-- `headerVisible`：boolean，显示内置头部栏
-- `type`：`'center'` | `'top'` | `'bottom'`
-- `maskClick`：boolean，点击遮罩关闭
-- `closable`：boolean，显示关闭按钮（需同时开启 `headerVisible`）
-- `safeArea`：boolean，自带 safe area
-- `extClass`
-
-### 标签
-
-```html
-<!-- 基础标签 -->
-<DuTag color="primary">标签文字</DuTag>
-
-<!-- ghost 样式（描边） -->
-<DuTag color="primary" bg="ghost" round>标签</DuTag>
-
-<!-- solid 样式（实色背景） -->
-<DuTag color="danger" bg="solid" :bordered="false">错误</DuTag>
-
-<!-- 可关闭标签 -->
-<DuTag color="primary" bg="soft" closeable @close="onClose">可关闭</DuTag>
-
-<!-- 自定义颜色 -->
-<DuTag :color="{ border: '#FF6B00', text: '#FF6B00', background: '#FFF3E8' }">自定义</DuTag>
-```
-
-**DuTag props**：
-- `color`：颜色名或 `{ border, text, background }`
-- `bg`：`'ghost'` | `'solid'` | `'soft'`
-- `size`
-- `round`：boolean
-- `bordered`：boolean
-- `closeable`：boolean
-- `icon`
-
-### 开关
-
-```html
-<DuSwitch v-model:on="form.enabled" />
-<DuSwitch v-model:on="form.notify" color="primary" />
-<DuSwitch v-model:on="form.auto" disabled />
-```
-
-**DuSwitch props**：
-- `v-model:on`
-- `color`
-- `disabled`
-
-### 上传
-
-```html
-<!-- 基础图片上传 -->
-<DuUpload
-  v-model:value="fileList"
-  action="/api/upload"
-  :maxCount="9"
-  uploadText="上传图片"
-/>
-
-<!-- 带徽标的大尺寸上传 -->
-<DuUpload
-  v-model:value="fileList"
-  action="/api/upload"
-  size="large"
-  badge="封面"
-  :mediaType="['image']"
-  :beforeUpload="handleBeforeUpload"
-/>
-```
-
-**DuUpload props**：
-- `v-model:value`：`UploadFile[]`
-- `action`：上传地址
-- `maxCount`：最大数量
-- `uploadText`：上传按钮文案
-- `size`：`'large'` | `'normal'`
-- `badge`：第一张图标签
-- `disabled`
-- `beforeUpload`：上传前处理函数
-- `mediaType`：`('image' | 'video')[]`
-
-### 表单
-
-**展示行 vs 输入框判断规则：**
-
-> **只有单个输入框、或没有 label 的输入框，直接用 `DuInput`，禁止套 `DuForm`。**
-
-连续多个「label + 输入框」行，且 label 宽度视觉一致时，才用 `DuForm` + `DuFormItem` 包裹。
-
-**DuForm props**：
-- `model`：表单数据对象（`:model`）
-- `labelSize`：label 固定宽度 px 字符串，如 `"80"`
-- `labelAlign`：`'left'` | `'right'`
-- `layout`：`'horizontal'` | `'vertical'`
-- **注意：DuForm 没有 `border` prop**，分割线通过 DuFormItem 的 `showBorder` 控制
-
-**DuFormItem props**：
-- `label`：左侧标签文字
-- `labelSize`
-- `labelAlign`
-- `layout`：`'horizontal'` | `'vertical'`
-- `showBorder`：boolean，显示底部边框分割线
-- `required`：boolean
-- `tips`：提示文本
-- `justify`：`'end'` | `'start'`，内容水平对齐
-- `items`：`'center'` | `'start'`，内容垂直对齐（horizontal 模式）
-- `extClass`
-
-```html
-<!-- 标准表单：showBorder 控制分割线，horizontal 布局 -->
-<DuForm :model="form" labelSize="80" labelAlign="right" layout="horizontal">
-  <DuFormItem label="银行卡号" showBorder>
-    <DuInput v-model:value="form.bankCard" placeholder="请输入" />
-  </DuFormItem>
-  <DuFormItem label="开户银行" showBorder>
-    <DuSelect
-      v-model:value="form.bank"
-      v-model:open="bankOpen"
-      :options="BANK_OPTIONS"
-      title="请选择银行"
-      formItem
-    />
-  </DuFormItem>
-  <DuFormItem label="手机号">
-    <DuInput v-model:value="form.phone" placeholder="请输入手机号" type="number" />
-  </DuFormItem>
-</DuForm>
-
-<!-- 垂直布局表单 -->
-<DuForm :model="form" layout="vertical">
-  <DuFormItem label="备注" layout="vertical" required tips="最多200字">
-    <DuTextarea v-model:value="form.remark" placeholder="请输入" :maxlength="200" showCount />
-  </DuFormItem>
-</DuForm>
-```
+| IslandsGridBasic | `IslandsGridBasic` | docs/business/islands/IslandsGridBasic.vue | 已生成 |
+| IslandsSlideBasic | `IslandsSlideBasic` | docs/business/islands/IslandsSlideBasic.vue | 已生成 |
+| SPUBasic | `SPUBasic` | docs/business/islands/SPUBasic.vue | 已生成 |
+| SPU | `SPU` | docs/business/islands/SPU.vue | 已生成 |
+| Price | `Price` | docs/business/islands/Price.vue | 已生成 |
+| IslandsQuickEntry | `IslandsQuickEntry` | docs/business/islands/IslandsQuickEntry.vue | 已生成 |
+| IslandsQuickEntryCard | `IslandsQuickEntryCard` | docs/business/islands/IslandsQuickEntryCard.vue | 已生成 |
+| IslandsFeed | `IslandsFeed` | docs/business/islands/IslandsFeed.vue | 已生成 |
+| IslandsFeedAd | `IslandsFeedAd` | docs/business/islands/IslandsFeedAd.vue | 已生成 |
+| FeedPost | `FeedPost` | docs/business/islands/FeedPost.vue | 已生成 |
+| FeedInteractionCard | `FeedInteractionCard` | docs/business/islands/FeedInteractionCard.vue | 已生成 |
+| IslandsPinBasic | `IslandsPinBasic` | docs/business/islands/IslandsPinBasic.vue | 已生成 |
+| IslandsTabBar / TabBar | `IslandsTabBar` | docs/business/islands/IslandsTabBar.vue | 已生成 |
+| IslandsNavigationBar / NavigationBar | `IslandsNavigationBar` | docs/business/islands/IslandsNavigationBar.vue | 已生成 |
+| ButtonFAB | `ButtonFAB` | docs/business/islands/ButtonFAB.vue | 已生成 |
 
 ---
 
 ## UnoCSS 配置
 
 <!--
-⚠ 根据实际项目配置修改此部分
-dangoui 使用 unocss-preset-echo，间距单位需确认
+⚠ 项目使用 presetUno()，默认单位是 rem，需要保留 px 后缀
 -->
 
-**间距单位**：1unit = 1px（请根据 uno.config.ts 确认）
+**间距单位**：保留 px 后缀（项目使用 presetUno 默认配置）
 
-换算示例（1unit = 1px 时）：
-- 骨架 `gap-2`（标准 8px）→ 项目写 `gap-8`
-- 骨架 `px-3.75`（15px）→ 项目写 `px-15`
-- 骨架 `py-4`（16px）→ 项目写 `py-16`
+写法示例：
+- 骨架 `gap-[8px]` → 项目写 `gap-8px` 或 `gap-[8px]`
+- 骨架 `px-[15px]` → 项目写 `px-15px` 或 `px-[15px]`
+- 骨架 `w-[100px]` → 项目写 `w-100px` 或 `w-[100px]`
+- 骨架 `rounded-[8px]` → 项目写 `rounded-8px`
 
 ---
 
 ## 设计 Token
 
-<!--
-⚠ 以下为参考值，根据实际项目的 uno.config.ts / theme.css 填写
--->
+### 颜色 Token
+
+骨架已输出 `var(--token-name, #fallback)` 格式，可直接使用。
+
+- 项目有 `design-tokens.css` → 自动使用 `var(--token-name)`
+- 项目没有对应变量 → 自动 fallback 到原始颜色值
+
+**无需手动维护颜色映射表。**
 
 ### 文字样式
 
-| 骨架输出 | 项目 class |
-|---|---|
-| `text-[18px] font-medium` | `text-h3 fw-500` |
-| `text-base font-medium` / `text-[16px] font-medium` | `text-h4 fw-500` |
-| `text-base font-normal` / `text-[16px]` | `text-b4` |
-| `text-sm font-normal` / `text-[14px]` | `text-b5` |
-| `text-[12px]` | `text-b6` |
-
-### 颜色 Token
+<!--
+⚠ 以下为参考值，根据实际项目的 uno.config.ts 填写
+骨架输出原始 CSS 值，翻译时按此表转换为项目 shortcuts
+-->
 
 | 骨架输出 | 项目 class |
 |---|---|
-| `text-[rgba(0,0,0,0.64)]` | `c-text-2` |
-| `text-[rgba(0,0,0,0.4)]` / `text-[#999]` | `c-text-3` |
-| `bg-[#F7F7F9]` / `bg-[#f5f5f5]` | `bg-page` |
-| `text-black` / `text-[#000]` | `c-text-1` |
-
-### 色板 hex → token 映射（gray-{100-900}）
-
-| hex 值 | token |
-|---|---|
-| `#f7f7f9` | `gray-100` |
-| `#ededf2` | `gray-200` |
-| `#e1e1e5` | `gray-300` |
-| `#d4d0da` | `gray-400` |
-| `#bab5c4` | `gray-500` |
-| `#918b9f` | `gray-600` |
-| `#625e76` | `gray-700` |
-| `#383950` | `gray-800` |
-| `#2b263b` | `gray-900` |
-
-### 色板 hex → token 映射（purple-{100-900}）
-
-| hex 值 | token |
-|---|---|
-| `#f2f0ff` | `purple-100` |
-| `#d9d2ff` | `purple-200` |
-| `#c7b8ff` | `purple-300` |
-| `#958dff` | `purple-400` |
-| `#7c66ff` | `purple-500` |
-| `#5c4cd9` | `purple-600` |
-| `#4036b3` | `purple-700` |
-| `#28238c` | `purple-800` |
-| `#1a1866` | `purple-900` |
-
-### 色板 hex → token 映射（grape-{100-900}）
-
-| hex 值 | token |
-|---|---|
-| `#f1e6ff` | `grape-100` |
-| `#ebd4ff` | `grape-200` |
-| `#d6b3ff` | `grape-300` |
-| `#b688ff` | `grape-400` |
-| `#ad69f7` | `grape-500` |
-| `#8a4fd1` | `grape-600` |
-| `#6838ab` | `grape-700` |
-| `#4a2585` | `grape-800` |
-| `#32195e` | `grape-900` |
-
-### 色板 hex → token 映射（blue-{100-900}）
-
-| hex 值 | token |
-|---|---|
-| `#e4ebf9` | `blue-100` |
-| `#cce0ff` | `blue-200` |
-| `#a6caff` | `blue-300` |
-| `#8fb7ff` | `blue-400` |
-| `#6c9aff` | `blue-500` |
-| `#5077d9` | `blue-600` |
-| `#3957b3` | `blue-700` |
-| `#263c8c` | `blue-800` |
-| `#1b2866` | `blue-900` |
-
-### 色板 hex → token 映射（zimablue-{100-900}）
-
-| hex 值 | token |
-|---|---|
-| `#dff7f7` | `zimablue-100` |
-| `#cbf7f7` | `zimablue-200` |
-| `#9df2f4` | `zimablue-300` |
-| `#62deef` | `zimablue-400` |
-| `#28bee0` | `zimablue-500` |
-| `#009bbf` | `zimablue-600` |
-| `#087599` | `zimablue-700` |
-| `#005273` | `zimablue-800` |
-| `#00344d` | `zimablue-900` |
-
-### 色板 hex → token 映射（turquoise-{100-900}）
-
-| hex 值 | token |
-|---|---|
-| `#e2f7f3` | `turquoise-100` |
-| `#cdf9eb` | `turquoise-200` |
-| `#9dedd9` | `turquoise-300` |
-| `#77e5d2` | `turquoise-400` |
-| `#36ccb6` | `turquoise-500` |
-| `#17ad9b` | `turquoise-600` |
-| `#14877e` | `turquoise-700` |
-| `#076059` | `turquoise-800` |
-| `#053b3a` | `turquoise-900` |
-
-### 色板 hex → token 映射（green-{100-900}）
-
-| hex 值 | token |
-|---|---|
-| `#e2f7e3` | `green-100` |
-| `#c9f2ca` | `green-200` |
-| `#9de09d` | `green-300` |
-| `#7ad37f` | `green-400` |
-| `#52ba5c` | `green-500` |
-| `#379e45` | `green-600` |
-| `#247842` | `green-700` |
-| `#145221` | `green-800` |
-| `#0f3d19` | `green-900` |
-
-### 色板 hex → token 映射（yellow-{100-900}）
-
-| hex 值 | token |
-|---|---|
-| `#fffde6` | `yellow-100` |
-| `#fff9ca` | `yellow-200` |
-| `#ffe885` | `yellow-300` |
-| `#fad728` | `yellow-400` |
-| `#edbf00` | `yellow-500` |
-| `#c79800` | `yellow-600` |
-| `#a17600` | `yellow-700` |
-| `#7a5600` | `yellow-800` |
-| `#543800` | `yellow-900` |
-
-### 色板 hex → token 映射（orange-{100-900}）
-
-| hex 值 | token |
-|---|---|
-| `#fff0e6` | `orange-100` |
-| `#ffdfca` | `orange-200` |
-| `#ffc299` | `orange-300` |
-| `#ffa15a` | `orange-400` |
-| `#fc7e22` | `orange-500` |
-| `#d65d11` | `orange-600` |
-| `#b04105` | `orange-700` |
-| `#8a2c00` | `orange-800` |
-| `#631c00` | `orange-900` |
-
-### 色板 hex → token 映射（red-{100-900}）
-
-| hex 值 | token |
-|---|---|
-| `#ffebe9` | `red-100` |
-| `#ffd1cf` | `red-200` |
-| `#ffabab` | `red-300` |
-| `#ff8380` | `red-400` |
-| `#f96464` | `red-500` |
-| `#d94a4e` | `red-600` |
-| `#b3343c` | `red-700` |
-| `#8c222c` | `red-800` |
-| `#661722` | `red-900` |
-
-### 色板 hex → token 映射（pink-{100-900}）
-
-| hex 值 | token |
-|---|---|
-| `#f7dfec` | `pink-100` |
-| `#ffcfe5` | `pink-200` |
-| `#ffaed5` | `pink-300` |
-| `#f980ba` | `pink-400` |
-| `#ed64a5` | `pink-500` |
-| `#c74a88` | `pink-600` |
-| `#a1336e` | `pink-700` |
-| `#7a2154` | `pink-800` |
-| `#54163b` | `pink-900` |
-
-### 色板 hex → token 映射（tendershoots-{100-900}）
-
-| hex 值 | token |
-|---|---|
-| `#fbffe5` | `tendershoots-100` |
-| `#f4fec3` | `tendershoots-200` |
-| `#e4f689` | `tendershoots-300` |
-| `#cdee2b` | `tendershoots-400` |
-| `#b2d600` | `tendershoots-500` |
-| `#99b800` | `tendershoots-600` |
-| `#7f9900` | `tendershoots-700` |
-| `#667a00` | `tendershoots-800` |
-| `#4c5c00` | `tendershoots-900` |
+| `text-[24px] font-[500] leading-[30px]` | `text-h1` |
+| `text-[20px] font-[500] leading-[26px]` | `text-h2` |
+| `text-[18px] font-[500] leading-[25px]` | `text-h3` |
+| `text-[16px] font-[500] leading-[24px]` | `text-h4` |
+| `text-[14px] font-[500] leading-[22px]` | `text-h5` |
+| `text-[12px] font-[500] leading-[18px]` | `text-h6` |
+| `text-[16px] font-[400] leading-[24px]` | `text-b4` |
+| `text-[14px] font-[400] leading-[22px]` | `text-b5` |
+| `text-[12px] font-[400] leading-[18px]` | `text-b6` |
+| `text-[10px] font-[400] leading-[11px]` | `text-b8` |
 
 ---
 
-## 页面结构模板
+## 组件引入
 
-```html
-<template>
-  <div class="flex flex-col min-h-screen bg-page">
-
-    <!-- 内容卡片 -->
-    <div class="bg-white px-15 py-16 mt-8">
-      <div class="text-h4 fw-500 mb-16">标题</div>
-      <!-- 内容 -->
-    </div>
-
-    <!-- 弹性占位 -->
-    <div class="flex-1" />
-
-    <!-- 底部按钮（若有） -->
-    <div class="px-15 py-12 safe-area-bottom bg-white b-t-1 b-t-solid b-hex-E5E5E5">
-      <DuButton color="primary" size="large" full @click="handleSubmit">
-        提交
-      </DuButton>
-    </div>
-
-  </div>
-</template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-// TODO: 按需补充
-</script>
-```
-
----
-
-## 生成规则
-
-1. **宽度不写死**：容器统一用 `w-full`，只有图标、头像等固定尺寸元素保留 `w-[Npx]`
-2. **颜色用 token**：优先用上方 token 表；找不到对应 token 时，用 UnoCSS hex 短语法替代（`text-[#f96464]` → `c-hex-f96464`，`bg-[#f96464]` → `bg-hex-f96464`，`border-[#f96464]` → `b-hex-f96464`），不要保留 `text-[#xxxxxx]` 写法
-3. **动态内容**：静态文字改为 `{{ variable }}`，在 script 中声明对应 `ref`
-4. **交互占位**：所有 `@click`、`@change` 加 `// TODO: 实现` 注释的方法
-5. **图标名称**：从骨架 INSTANCE 名中提取，转为 kebab-case（`IconArrowRight` → `arrow-right`）
-6. **extClass**：需要额外样式时用 `extClass` prop 而不是直接加 class
-7. **单输入框禁止套 DuForm**：只有单个输入框或无 label 的输入框直接用 `DuInput`，不要包裹 `DuForm`
-8. **DuForm 无 border prop**：行间分割线通过 `DuFormItem` 的 `showBorder` 控制，不要在 `DuForm` 上加 `border`
+dangoui 组件需手动 import：`import { DuButton, DuIcon, ... } from 'dangoui'`
