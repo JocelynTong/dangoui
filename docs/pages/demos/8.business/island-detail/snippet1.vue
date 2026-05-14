@@ -1,281 +1,194 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { DuBadge, DuTag, DuButton, DuTabs, DuTab, DuAvatar, DuIcon } from 'dangoui'
+
+import IslandsHeader from '../components/IslandsHeader.vue'
+import IslandsPin from '../components/IslandsPin.vue'
+import IslandsPinBasic from '../components/IslandsPinBasic.vue'
+import IslandsGrid from '../components/IslandsGrid.vue'
+import IslandsGridBasic from '../components/IslandsGridBasic.vue'
+import IslandsSlide from '../components/IslandsSlide.vue'
+import IslandsSlideBasic from '../components/IslandsSlideBasic.vue'
+import IslandsQuickEntry from '../components/IslandsQuickEntry.vue'
+import IslandsQuickEntryTitle from '../components/IslandsQuickEntryTitle.vue'
+import IslandsQuickEntryInfo from '../components/IslandsQuickEntryInfo.vue'
+import IslandsFeed from '../components/IslandsFeed.vue'
+import IslandsFeedAd from '../components/IslandsFeedAd.vue'
+import FeedPost from '../components/FeedPost.vue'
+import SPU from '../components/SPU.vue'
+import SPUBasic from '../components/SPUBasic.vue'
+import Price from '../components/Price.vue'
+import GridBasic from '../components/GridBasic.vue'
+import AvatarGrouped from '../components/AvatarGrouped.vue'
+import ButtonFAB from '../components/ButtonFAB.vue'
+import TabBar from '../components/TabBar.vue'
+import HomeIndicator from '../components/HomeIndicator.vue'
+
+const activeTab = ref(0)
+const activeTabBar = ref(0)
+
+const pinItems = [
+  { name: '首页', icon: '' },
+  { name: 'Labubu', badge: 6, active: true },
+  { name: '剧本杀', badge: 41 },
+  { name: '潘神', badge: '999+' },
+  { name: '毕奇', badge: 6 },
+  { name: '我加入的岛' },
+]
+
+const gridItems = [
+  { name: '图鉴' },
+  { name: '角色' },
+  { name: '潮玩系列' },
+  { name: '潮玩' },
+]
+
+const quickEntryItems = [
+  { type: '闲置', subtitle: 'Mega宇航员航员', price: '¥59.99', tag: '领券' },
+  { type: '闪购', subtitle: 'Mega宇航员航员', price: '¥59' },
+  { type: '拍卖', subtitle: '剩22时30分', price: '¥59.99' },
+  { type: '福袋', subtitle: '剩22/99款', price: '¥59.99' },
+  { type: '拼团', subtitle: '共999款', price: '¥59.99' },
+]
+
+const feedTabs = ['推荐', '最新', '未选', '未选', '未选', '未选']
+
+const tabBarItems = [
+  { icon: 'home', label: '岛' },
+  { icon: 'discovery', label: '发现' },
+  { icon: 'shop', label: '商城' },
+  { icon: 'message', label: '消息', badge: 35 },
+  { icon: 'user', label: '我的' },
+]
+</script>
+
 <template>
-  <div class="bg-[var(--icon-1,#2b263b)] w-full min-h-screen">
-    <!-- 顶部深色区域 -->
-    <div class="flex flex-col">
-      <!-- StatusBar -->
-      <div class="h-44px flex items-center justify-center">
-        <span class="text-[var(--bg-1,#ffffff)] text-14px font-500">{{ currentTime }}</span>
-      </div>
+  <div class="bg-[var(--icon-1,#2b263b)] w-375px min-h-812px relative">
+    <!-- Header -->
+    <IslandsHeader title="Labubu泰坦" />
 
-      <!-- NavigationBar -->
-      <div class="flex gap-4px items-center px-12px h-44px">
-        <DuIcon name="islands" :size="24" color="#fff" />
-        <div class="flex-1 flex items-center gap-8px bg-[var(--white-3,rgba(255,255,255,0.12))] rounded-20px px-12px py-6px">
-          <DuIcon name="search" :size="16" color="rgba(255,255,255,0.6)" />
-          <span class="text-[rgba(255,255,255,0.6)] text-14px">{{ searchPlaceholder }}</span>
-        </div>
-        <DuIconButton name="menu" color="#fff" @click="handleMenuClick" />
-      </div>
+    <!-- Islands Pin -->
+    <IslandsPin class="px-8px">
+      <IslandsPinBasic
+        v-for="(item, index) in pinItems"
+        :key="index"
+        :name="item.name"
+        :badge="item.badge"
+        :active="item.active"
+      />
+    </IslandsPin>
 
-      <!-- IslandsPin 置顶岛入口 -->
-      <div class="flex px-4px py-8px overflow-x-auto">
-        <IslandsPinBasic
-          v-for="island in pinnedIslands"
-          :key="island.id"
-          :name="island.name"
-          :icon="island.icon"
-          :cover="island.cover"
-          :badge="island.badge"
-          :active="island.active"
-          @click="handleIslandClick(island)"
-        />
-      </div>
-    </div>
-
-    <!-- 主内容区（白色） -->
-    <div class="bg-[var(--bg-1,#ffffff)] rounded-t-12px flex flex-col gap-8px pb-80px">
-      <!-- IslandsGrid 横滑入口 -->
-      <div class="flex gap-8px items-center px-12px pt-12px overflow-x-auto">
+    <!-- Main Content -->
+    <div class="bg-[var(--bg-1,#ffffff)] rounded-12px flex flex-col gap-8px mt-8px p-8px">
+      <!-- Grid -->
+      <IslandsGrid>
         <IslandsGridBasic
-          v-for="entry in gridEntries"
-          :key="entry.id"
-          :title="entry.title"
-          :icon="entry.icon"
-          :cover="entry.cover"
-          @click="handleEntryClick(entry)"
-        />
-      </div>
-
-      <!-- IslandsSlide 横滑卡片 -->
-      <div class="flex gap-8px px-12px overflow-x-auto">
-        <IslandsSlideBasic
-          v-for="item in slideItems"
-          :key="item.id"
+          v-for="(item, index) in gridItems"
+          :key="index"
           :name="item.name"
-          :covers="item.covers"
-          :tag="item.tag"
-          :count="item.count"
-          @click="handleSlideClick(item)"
         />
-        <SPU
-          v-for="spu in spuItems"
-          :key="spu.id"
-          :name="spu.name"
-          :cover="spu.cover"
-          :tag="spu.tag"
-          :second-info="spu.secondInfo"
-          @click="handleSpuClick(spu)"
-        />
-      </div>
+      </IslandsGrid>
 
-      <!-- IslandsQuickEntry 快捷入口 -->
-      <IslandsQuickEntry>
-        <IslandsQuickEntryCard
-          v-for="card in quickEntries"
-          :key="card.id"
-          :title="card.title"
-          :subtitle="card.subtitle"
-          :price="card.price"
-          :cover="card.cover"
-          :badge="card.badge"
-          :countdown="card.countdown"
-          :stock="card.stock"
-          @click="handleQuickEntryClick(card)"
-        />
-      </IslandsQuickEntry>
+      <!-- Slide - Tags -->
+      <IslandsSlide>
+        <GridBasic v-for="i in 7" :key="i" name="Tag Name" layout="vertical" />
+      </IslandsSlide>
 
-      <!-- IslandsFeed 信息流 -->
-      <IslandsFeed v-model:active-tab="activeTab" :tabs="feedTabs">
-        <template #left>
-          <!-- 广告位 -->
-          <IslandsFeedAd :total="5" :current="3" />
+      <!-- Slide - SPUs -->
+      <IslandsSlide>
+        <IslandsSlideBasic label="最新款式" />
+        <SPU v-for="i in 6" :key="i" name="Spu Name" info="{n} 想要" />
+      </IslandsSlide>
 
-          <!-- 左列帖子 -->
+      <!-- Quick Entry -->
+      <IslandsQuickEntry :items="quickEntryItems" />
+
+      <!-- Feed -->
+      <IslandsFeed :tabs="feedTabs" v-model:active-tab="activeTab">
+        <!-- Left Column -->
+        <div class="flex flex-col gap-8px w-174px">
+          <IslandsFeedAd :indicators="5" :active-indicator="3" />
           <FeedPost
-            v-for="post in leftPosts"
-            :key="post.id"
-            :cover="post.cover"
-            :content="post.content"
-            :author="post.author"
-            :avatar="post.avatar"
-            :likes="post.likes"
-            :is-video="post.isVideo"
-            :is-debut="post.isDebut"
-            :island-name="post.islandName"
+            content="留作纪念！"
+            author="JocelynTong✨"
+            likes="784"
             size="small"
-            @click="handlePostClick(post)"
+            is-video
           />
-
-          <!-- 互动卡片 -->
-          <FeedInteractionCard
-            :title="interactionTitle"
-            :subtitle="interactionSubtitle"
-            :avatars="interactionAvatars"
-            badge="得闪购券"
-            @click="handleShareClick"
-          />
-        </template>
-
-        <template #right>
-          <!-- 右列帖子 -->
           <FeedPost
-            v-for="post in rightPosts"
-            :key="post.id"
-            :cover="post.cover"
-            :content="post.content"
-            :author="post.author"
-            :avatar="post.avatar"
-            :likes="post.likes"
-            :is-video="post.isVideo"
-            :is-debut="post.isDebut"
-            :island-name="post.islandName"
+            content="留作纪念！"
+            author="JocelynTong✨"
+            likes="784"
             size="large"
-            @click="handlePostClick(post)"
+            is-video
+            is-debut
           />
-        </template>
+          <FeedPost
+            content="留作纪念！"
+            author="JocelynTong✨"
+            likes="8493"
+            size="medium"
+            is-video
+            is-debut
+          />
+          <!-- Activity Card -->
+          <div class="bg-[#6a5538] rounded-8px p-12px">
+            <span class="text-[var(--white-8,rgba(255,255,255,0.88))] text-11px">多栋款</span>
+            <p class="text-[var(--bg-1,#ffffff)] text-16px font-500 mt-4px">晒晒你刚入手的潮玩吧</p>
+            <AvatarGrouped class="mt-8px" size="mini" :max="5" />
+            <p class="text-[var(--bg-1,#ffffff)] text-11px mt-8px">3934位Labubu同好期待你的晒图和锐评</p>
+            <div class="flex justify-center mt-8px relative">
+              <DuButton type="soft" size="small">标记并分享</DuButton>
+              <DuBadge class="absolute -top-4px -right-4px" type="tag">得闪购券</DuBadge>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="flex flex-col gap-8px w-174px">
+          <FeedPost
+            content="留作纪念！"
+            author="JocelynTong✨"
+            likes="784"
+            size="large"
+            is-video
+            is-debut
+          />
+          <FeedPost
+            content="留作纪念！"
+            author="JocelynTong✨"
+            likes="8493"
+            size="medium"
+            is-video
+            is-debut
+          />
+          <FeedPost
+            content="留作纪念！"
+            author="JocelynTong✨"
+            likes="784"
+            size="small"
+            is-video
+            is-debut
+          />
+          <FeedPost
+            title="这是标题这是标题这是标题这是标题这是标题"
+            content="大家好，我是青门引的楚梵，此次代表青门引来给大家聊聊天。"
+            author="JocelynTong✨"
+            likes="784"
+            size="small"
+            is-debut
+          />
+        </div>
       </IslandsFeed>
     </div>
 
-    <!-- TabBar -->
-    <IslandsTabBar v-model="activeTabBar" :items="tabBarItems" />
+    <!-- FAB -->
+    <ButtonFAB class="fixed bottom-100px right-16px" />
 
-    <!-- FAB 发布按钮 -->
-    <ButtonFAB icon="plus" color="primary" position="bottom-right" @click="handlePublish" />
+    <!-- TabBar -->
+    <TabBar :items="tabBarItems" v-model:active="activeTabBar" class="fixed bottom-34px left-0 right-0" />
+
+    <!-- Home Indicator -->
+    <HomeIndicator class="fixed bottom-0 left-0 right-0" />
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import { DuIcon, DuIconButton } from 'dangoui'
-import {
-  IslandsGridBasic,
-  IslandsSlideBasic,
-  SPU,
-  IslandsQuickEntry,
-  IslandsQuickEntryCard,
-  IslandsFeed,
-  IslandsFeedAd,
-  FeedPost,
-  FeedInteractionCard,
-  IslandsPinBasic,
-  IslandsTabBar,
-  ButtonFAB,
-} from '../../../../business/islands'
-
-// 导航栏数据
-const currentTime = ref('11:27')
-const searchPlaceholder = ref('Labubu泰坦')
-
-// 置顶岛数据
-const pinnedIslands = ref([
-  { id: 0, name: '首页', icon: 'home', active: false },
-  { id: 1, name: 'Labubu', cover: '', badge: 6, active: true },
-  { id: 2, name: '剧本杀', cover: '', badge: 41 },
-  { id: 3, name: '潘神', cover: '', badge: '999+' },
-  { id: 4, name: '毕奇', cover: '', badge: 6 },
-  { id: 5, name: '我加入的岛', icon: 'all' },
-])
-
-// 横滑入口数据
-const gridEntries = ref([
-  { id: 1, icon: 'all', title: '图鉴' },
-  { id: 2, icon: 'character', title: '角色' },
-  { id: 3, cover: 'https://placeholder.com/24x32', title: '潮玩系列' },
-  { id: 4, cover: 'https://placeholder.com/24x32', title: '潮玩' },
-])
-
-// 横滑卡片数据
-const slideItems = ref([
-  { id: 1, name: '最新款式', covers: [], tag: '', count: 36 },
-])
-
-const spuItems = ref([
-  { id: 2, name: 'Spu Name', cover: '', tag: 'NEW', secondInfo: '100 想要' },
-  { id: 3, name: 'Spu Name', cover: '', secondInfo: '50 想要' },
-  { id: 4, name: 'Spu Name', cover: '', secondInfo: '30 想要' },
-])
-
-// 快捷入口数据
-const quickEntries = ref([
-  { id: 1, title: '领券', subtitle: 'Mega宇航员航员', price: 59.99, cover: '', badge: '领券' },
-  { id: 2, title: '涨价', subtitle: 'Mega宇航员航员', price: 59, cover: '' },
-  { id: 3, title: '限时', subtitle: '', price: 59.99, cover: '', countdown: { hours: 22, minutes: 30 } },
-  { id: 4, title: '剩余', subtitle: '', price: 59.99, cover: '', stock: { current: 22, total: 99 } },
-  { id: 5, title: '共999款', subtitle: '', price: 59.99, cover: '' },
-])
-
-// Feed Tabs
-const feedTabs = ref([
-  { name: 'recommend', label: '推荐' },
-  { name: 'latest', label: '最新' },
-  { name: 'hot', label: '热门' },
-])
-const activeTab = ref('recommend')
-
-// 左侧帖子数据
-const leftPosts = ref([
-  { id: 1, content: '留作纪念！', author: 'JocelynTong✨', avatar: '', cover: '', likes: 784, isVideo: true },
-  { id: 2, content: '留作纪念！', author: 'JocelynTong✨', avatar: '', cover: '', likes: 784, isDebut: true },
-  { id: 3, content: '留作纪念！', author: 'JocelynTong✨', avatar: '', cover: '', likes: 8493, isDebut: true },
-])
-
-// 右侧帖子数据
-const rightPosts = ref([
-  { id: 4, content: '留作纪念！', author: 'JocelynTong✨', avatar: '', cover: '', likes: 784, isDebut: true },
-  { id: 5, content: '留作纪念！', author: 'JocelynTong✨', avatar: '', cover: '', likes: 784, isDebut: true },
-  { id: 6, content: '留作纪念！', author: 'JocelynTong✨', avatar: '', cover: '', likes: 784 },
-])
-
-// 互动卡片数据
-const interactionTitle = ref('晒晒你刚入手的潮玩吧')
-const interactionSubtitle = ref('3934位Labubu同好期待你的晒图和锐评')
-const interactionAvatars = ref(['', '', '', '', ''])
-
-// TabBar 数据
-const tabBarItems = ref([
-  { name: 'home', label: '岛', icon: 'home' },
-  { name: 'discover', label: '发现', icon: 'discover' },
-  { name: 'shop', label: '商城', icon: 'shop' },
-  { name: 'message', label: '消息', icon: 'message', badge: 35 },
-  { name: 'me', label: '我的', icon: 'me' },
-])
-const activeTabBar = ref('home')
-
-// 事件处理
-const handleEntryClick = (entry: (typeof gridEntries.value)[0]) => {
-  console.log('Entry clicked:', entry)
-}
-
-const handleSlideClick = (item: (typeof slideItems.value)[0]) => {
-  console.log('Slide item clicked:', item)
-}
-
-const handleSpuClick = (spu: (typeof spuItems.value)[0]) => {
-  console.log('SPU clicked:', spu)
-}
-
-const handleQuickEntryClick = (card: (typeof quickEntries.value)[0]) => {
-  console.log('Quick entry clicked:', card)
-}
-
-const handlePostClick = (post: (typeof leftPosts.value)[0]) => {
-  console.log('Post clicked:', post)
-}
-
-const handleIslandClick = (island: (typeof pinnedIslands.value)[0]) => {
-  pinnedIslands.value.forEach(i => (i.active = i.id === island.id))
-  console.log('Island clicked:', island)
-}
-
-const handleMenuClick = () => {
-  console.log('Menu clicked')
-}
-
-const handleShareClick = () => {
-  console.log('Share clicked')
-}
-
-const handlePublish = () => {
-  console.log('Publish clicked')
-}
-</script>

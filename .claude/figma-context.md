@@ -17,37 +17,30 @@
 
 | Figma 组件名（模糊匹配） | 项目组件 | 文件路径 | 备注 |
 |---|---|---|---|
-| IslandsGridBasic | `IslandsGridBasic` | docs/business/islands/IslandsGridBasic.vue | 已生成 |
-| IslandsSlideBasic | `IslandsSlideBasic` | docs/business/islands/IslandsSlideBasic.vue | 已生成 |
-| SPUBasic | `SPUBasic` | docs/business/islands/SPUBasic.vue | 已生成 |
-| SPU | `SPU` | docs/business/islands/SPU.vue | 已生成 |
-| Price | `Price` | docs/business/islands/Price.vue | 已生成 |
-| IslandsQuickEntry | `IslandsQuickEntry` | docs/business/islands/IslandsQuickEntry.vue | 已生成 |
-| IslandsQuickEntryCard | `IslandsQuickEntryCard` | docs/business/islands/IslandsQuickEntryCard.vue | 已生成 |
-| IslandsFeed | `IslandsFeed` | docs/business/islands/IslandsFeed.vue | 已生成 |
-| IslandsFeedAd | `IslandsFeedAd` | docs/business/islands/IslandsFeedAd.vue | 已生成 |
-| FeedPost | `FeedPost` | docs/business/islands/FeedPost.vue | 已生成 |
-| FeedInteractionCard | `FeedInteractionCard` | docs/business/islands/FeedInteractionCard.vue | 已生成 |
-| IslandsPinBasic | `IslandsPinBasic` | docs/business/islands/IslandsPinBasic.vue | 已生成 |
-| IslandsTabBar / TabBar | `IslandsTabBar` | docs/business/islands/IslandsTabBar.vue | 已生成 |
-| IslandsNavigationBar / NavigationBar | `IslandsNavigationBar` | docs/business/islands/IslandsNavigationBar.vue | 已生成 |
-| ButtonFAB | `ButtonFAB` | docs/business/islands/ButtonFAB.vue | 已生成 |
+<!-- 每次递归生成新组件后，在此补充一行，例如：
+| ProductCard | `ProductCard` | src/components/ProductCard.vue | 已生成 |
+-->
 
 ---
 
 ## UnoCSS 配置
 
 <!--
-⚠ 项目使用 presetUno()，默认单位是 rem，需要保留 px 后缀
+⚠ 根据实际项目 uno.config.ts 配置修改此部分
 -->
 
-**间距单位**：保留 px 后缀（项目使用 presetUno 默认配置）
+**间距单位**：保留 px 后缀（presetUno 默认配置）
 
 写法示例：
-- 骨架 `gap-[8px]` → 项目写 `gap-8px` 或 `gap-[8px]`
-- 骨架 `px-[15px]` → 项目写 `px-15px` 或 `px-[15px]`
-- 骨架 `w-[100px]` → 项目写 `w-100px` 或 `w-[100px]`
+- 骨架 `gap-[8px]` → 项目写 `gap-8px` 或保留 `gap-[8px]`
+- 骨架 `px-[15px]` → 项目写 `px-15px` 或保留 `px-[15px]`
+- 骨架 `w-[100px]` → 项目写 `w-100px` 或保留 `w-[100px]`
 - 骨架 `rounded-[8px]` → 项目写 `rounded-8px`
+
+<!--
+如果项目使用 unocss-preset-echo（1unit = 1px），则可去掉 px：
+- 骨架 `gap-[8px]` → 项目写 `gap-8`
+-->
 
 ---
 

@@ -42,25 +42,39 @@ npx figma-to-code $URL --framework=vue --tokens=qiandao
 2. 如果存在 `.claude/figma-base/` 目录（新版按需加载模式）：
    - 读取 `.claude/figma-context.md` — 项目定制（业务组件映射、文字样式 Token）
    - 读取 `.claude/figma-base/core.md` — 核心翻译原则
-   - **解析第一步生成的骨架代码**，提取其中出现的组件标签（如 `<DuButton>`、`<DuInput>`）
-   - 读取 `.claude/figma-base/index.json`，根据组件标签查找对应的规则文件
+   - **读取 `.claude/figma-base/index.json`**，获取 `aliases` 映射表
+   - **解析第一步生成的骨架代码**，提取所有组件标签
+   - **用 `aliases` 映射组件名**：骨架中的 `NavigationBar` → `DuNavigationBar`，`SearchBar` → `DuSearch` 等
+   - 根据映射后的组件名查找对应的规则文件（`components` 字段）
    - **只读取用到的组件规则**：`.claude/figma-base/components/*.md`
    - 读取 `.claude/figma-base/layout.md` — 布局模式规则
 
 3. 如果不存在 `figma-base/` 目录（旧版完整模式）：
    - 读取 `.claude/figma-context.md` — 完整的组件映射和样式规范
 
+**组件名映射规则**（基于 `index.json` 的 `aliases`）：
+- 骨架中 `<NavigationBar>` → 命中 aliases → 使用 `<DuNavigationBar>`
+- 骨架中 `<SearchBar>` → 命中 aliases → 使用 `<DuSearch>`
+- 骨架中 `<ProductCard>` → 未命中 aliases → 保持原名，查业务组件映射表
+
 **组件规则按需加载示例**：
-- 骨架中出现 `<DuButton>` → 读取 `components/button.md`
-- 骨架中出现 `<DuInput>` → 读取 `components/input.md`
-- 骨架中出现 `<DuFormItem>` → 读取 `components/form.md`
+- 映射后出现 `DuButton` → 读取 `components/button.md`
+- 映射后出现 `DuNavigationBar` → 读取 `components/navigation.md`
+- 映射后出现 `DuFormItem` → 读取 `components/form.md`
 - 未出现的组件规则不需要读取
 
 **第三步：翻译骨架为业务组件**
 
-对照 `figma-context.md` 中的规范：
+**3.1 组件名转换**（最重要的一步）：
 
-- INSTANCE 标签 → 映射为项目真实组件
+骨架中的组件标签按以下优先级处理：
+
+1. **命中 `aliases`** → 转为 UI 库组件（如 `NavigationBar` → `DuNavigationBar`）
+2. **命中业务组件映射表**（`figma-context.md`）→ 使用已生成的业务组件
+3. **未命中任何映射** → 保留原名，标记为待处理（第五步询问用户）
+
+**3.2 样式和内容转换**：
+
 - 容器宽度 → 改为 `w-full`（unocss 模式）或 `width: 100%`（css/inline 模式）
 - 静态文字 → 改为 `{{ variable }}`，交互元素加 `@click` / `v-model` 占位
 - `<script setup>` 中补充对应变量、方法，以及按 `figma-context.md` 的「组件引入」规则添加 import
@@ -99,20 +113,46 @@ npx figma-to-code $URL --framework=vue --tokens=qiandao
 
 `DuForm` 自带行间分割线和布局，内部不需要再手动加 `DuDivider`。不满足时（只有 1-2 个零散输入框）直接用 `DuInput`，不强制套 Form。
 
-**第四步：输出主组件**
+**第四步：翻译主组件（暂不写入文件）**
 
-- 指定了目标路径 → 写入文件
-- 未指定 → 输出到对话，由用户确认后保存
+> **⚠️ 禁止在此步骤写入文件，必须先完成第五步的询问**
 
-**第五步：处理未识别的子组件（递归生成）**
+翻译完成后，将代码**暂存在内存中**，不要写入文件，继续执行第五步。
 
-翻译完成后，检查骨架中所有带 `<!-- figma-node: xxx -->` 注释的标签：
+**第五步：询问未识别的子组件（必须执行）**
 
-1. **对每个未识别的 INSTANCE**（未命中 `figma-context.md` 业务组件映射表的），询问用户：
+> **⚠️ 强制规则：必须询问用户，禁止跳过**
+> - 不管未识别的组件有多少个（即使 100+），都**必须询问用户**
+> - **禁止**自己决定「太多了，用 div 占位」
+> - 必须等用户回复后才能继续第六步
 
-   > 发现未识别的子组件 `<ComponentName>`（figma-node: xxx），是否需要生成对应文件？如需要，请告知保存路径（如 `src/components/ComponentName.vue`）。
+检查骨架中所有带 `<!-- figma-node: xxx -->` 注释的标签，统计未识别的组件（未命中 `aliases` 且未命中业务组件映射表的）：
 
-2. **用户确认路径后**：
+1. **去重并统计**：按组件名去重，统计每个组件出现的次数
+
+2. **一次性列出所有未识别组件**，询问用户：
+
+   > 发现以下未识别的业务组件（已去重）：
+   > 
+   > | 组件名 | 出现次数 | figma-node（取第一个） |
+   > |--------|----------|------------------------|
+   > | IslandsPinBasic | 6 | 14210:714409 |
+   > | FeedPost | 7 | 18215:29049 |
+   > | ... | ... | ... |
+   > 
+   > 请告知：
+   > 1. 哪些需要生成？（列出组件名）
+   > 2. 保存路径格式？（如 `docs/business/{ComponentName}.vue`）
+   > 3. 输入「全部跳过」则用占位 div 处理
+
+3. **等待用户回复**，根据用户选择：
+   - 用户指定要生成的组件 → 记录下来，第六步处理
+   - 用户说「全部跳过」→ 所有未识别组件用占位 div 处理
+   - 用户指定部分生成、部分跳过 → 按用户要求处理
+
+**第六步：写入文件（用户确认后执行）**
+
+1. **生成用户要求的子组件**（如有）：
    - 用该组件的 `figma-node` id 重新执行 CLI（保持与主组件相同的 `--tokens` 参数）：
      ```bash
      npx figma-to-code <原始fileKey对应的url>&node-id=<componentId> --framework=vue --tokens=<同上>
@@ -123,8 +163,14 @@ npx figma-to-code $URL --framework=vue --tokens=qiandao
      ```
      | ComponentName | `ComponentName` | src/components/ComponentName.vue | 已生成 |
      ```
-   - 回到主组件，将对应标签替换为真实组件，并在 `<script setup>` 中补充 import
 
-3. **用户跳过** → 保留占位标签，不处理
+2. **更新主组件代码**：
+   - 将已生成的子组件替换为真实组件引用
+   - 未生成的子组件用占位 div 处理
+   - 在 `<script setup>` 中补充所有 import
 
-4. 所有子组件处理完毕后，**输出最终完整的主组件代码**（含所有 import）。
+3. **写入主组件文件**：
+   - 指定了目标路径 → 写入文件
+   - 未指定 → 输出到对话，由用户确认后保存
+
+4. **输出完成摘要**：列出已生成的所有文件路径
