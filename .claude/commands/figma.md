@@ -1,6 +1,21 @@
 # figma
 
-根据 Figma 链接生成项目可用的 Vue 组件。
+根据 Figma 链接生成骨架，并按项目规范翻译为前端组件。
+
+## 核心翻译原则
+
+**骨架即真相，1:1 还原**：骨架输出什么，翻译结果就对应什么。
+
+翻译规则：
+1. **保留原始值**：数值、尺寸、颜色直接使用
+2. **翻译每个元素**：包括装饰性元素
+3. **透传所有属性**：class、style、尺寸等抽组件时作为 props 透传
+
+判断标准：骨架中的每个节点、属性、数值，都能在翻译结果中找到对应。
+
+**不确定时询问用户**。
+
+---
 
 ## 重要：立即执行以下步骤，不要做任何预检查
 
@@ -10,167 +25,114 @@
 
 ## 步骤
 
-**第零步：确认产品 token（首次使用时询问）**
+**第一步：检测项目框架**
 
-如果用户没有指定 `--tokens`，询问用户：
+检查项目技术栈，确定输出框架：
+- 存在 `vue` 相关依赖 / `.vue` 文件 → `--framework=vue`
+- 存在 `react` 相关依赖 / `.tsx` 文件 → `--framework=react`
+- 存在 `pubspec.yaml` / `.dart` 文件 → `--framework=flutter`
+- 默认使用 `--framework=vue`
 
-> 请选择设计稿对应的产品 token：
-> 1. 千岛 (qiandao) - 默认
-> 2. 奇货 (qihuo)
-> 3. 临界 (linjie)
-> 4. 米花 (mihua)
+**第二步：立即运行命令生成骨架**
 
-用户选择后，在命令中添加 `--tokens=xxx` 参数。
-
-**第一步：立即运行命令生成骨架**
-
-将 `$URL` 替换为用户提供的 Figma 链接，直接执行：
+将 `$URL` 替换为用户提供的 Figma 链接，`$FRAMEWORK` 替换为检测到的框架：
 
 ```bash
-npx figma-to-code $URL --framework=vue --tokens=qiandao
+npx figma-to-code $URL --framework=$FRAMEWORK
 ```
-
-> CLI 会自动检测项目技术栈（UnoCSS/Tailwind → unocss 模式，小程序/RN → inline 模式，其他 → css 模式）。
-> 用户可用 `--style=unocss|css|inline` 手动覆盖。
 
 如果报错再告知用户，否则继续下一步。
 
-**第二步：读取项目规范（按需加载）**
+**第三步：读取项目规范**
 
-1. 检查 `.claude/figma-context.md` 是否存在，不存在则告知用户运行 `figma-to-code init`
+读取以下规范文件（按需加载）：
+- `.claude/figma-base/core.md` — 核心翻译规则（必读）
+- `.claude/figma-base/layout.md` — 布局规则
+- `.claude/figma-base/components/_catalog.md` — 基础组件映射
+- `.claude/figma-base/business/_catalog.md` — 业务组件映射
+- `.claude/figma-base/components/*.md` — 各组件详细规则（用到哪个读哪个）
 
-2. 如果存在 `.claude/figma-base/` 目录（新版按需加载模式）：
-   - 读取 `.claude/figma-context.md` — 项目定制（业务组件映射、文字样式 Token）
-   - 读取 `.claude/figma-base/core.md` — 核心翻译原则
-   - **读取 `.claude/figma-base/index.json`**，获取 `aliases` 映射表
-   - **解析第一步生成的骨架代码**，提取所有组件标签
-   - **用 `aliases` 映射组件名**：骨架中的 `NavigationBar` → `DuNavigationBar`，`SearchBar` → `DuSearch` 等
-   - 根据映射后的组件名查找对应的规则文件（`components` 字段）
-   - **只读取用到的组件规则**：`.claude/figma-base/components/*.md`
-   - 读取 `.claude/figma-base/layout.md` — 布局模式规则
+**第四步：翻译骨架**
 
-3. 如果不存在 `figma-base/` 目录（旧版完整模式）：
-   - 读取 `.claude/figma-context.md` — 完整的组件映射和样式规范
+### 节点类型处理
 
-**组件名映射规则**（基于 `index.json` 的 `aliases`）：
-- 骨架中 `<NavigationBar>` → 命中 aliases → 使用 `<DuNavigationBar>`
-- 骨架中 `<SearchBar>` → 命中 aliases → 使用 `<DuSearch>`
-- 骨架中 `<ProductCard>` → 未命中 aliases → 保持原名，查业务组件映射表
-
-**组件规则按需加载示例**：
-- 映射后出现 `DuButton` → 读取 `components/button.md`
-- 映射后出现 `DuNavigationBar` → 读取 `components/navigation.md`
-- 映射后出现 `DuFormItem` → 读取 `components/form.md`
-- 未出现的组件规则不需要读取
-
-**第三步：翻译骨架为业务组件**
-
-**3.1 组件名转换**（最重要的一步）：
-
-骨架中的组件标签按以下优先级处理：
-
-1. **命中 `aliases`** → 转为 UI 库组件（如 `NavigationBar` → `DuNavigationBar`）
-2. **命中业务组件映射表**（`figma-context.md`）→ 使用已生成的业务组件
-3. **未命中任何映射** → 保留原名，标记为待处理（第五步询问用户）
-
-**3.2 样式和内容转换**：
-
-- 容器宽度 → 改为 `w-full`（unocss 模式）或 `width: 100%`（css/inline 模式）
-- 静态文字 → 改为 `{{ variable }}`，交互元素加 `@click` / `v-model` 占位
-- `<script setup>` 中补充对应变量、方法，以及按 `figma-context.md` 的「组件引入」规则添加 import
-
-**颜色 Token 处理**：
-
-骨架已输出 `var(--token-name, #fallback)` 格式，**直接保留即可**：
-- 项目有 CSS 变量 → 自动使用 token
-- 项目没有 CSS 变量 → 自动 fallback 到原始颜色值
-
-**文字样式处理**：
-
-骨架输出原始 CSS 值（如 `text-[14px] font-[500]`），按 `figma-context.md` 的文字样式映射表转换为项目 shortcuts（如 `text-h5`）。
-
-**布局语义修正**（骨架可能未能完整提取，翻译时按视觉结构判断）：
-
-- 一行内有 2 个子元素，左边是 label 文字、右边是 value / 占位文字 / icon → 使用 `justify-between`
-- 子元素需要撑满父容器宽度 → 使用 `w-full` 或 `flex-1`
-
-**展示行 vs 输入框的区分**（核心判断依据是右侧内容类型）：
-
-| 视觉特征 | 右侧内容 | 应生成 |
+| data-type | 场景判断 | 处理方式 |
 |---|---|---|
-| label + 右侧「请输入xxx」/ 「请选择」灰色 placeholder | 可编辑输入 | `DuFormItem` + `DuInput` / `DuSelect` |
-| label + 右侧实际数据值（如「李笑笑」「2025年」）+ 可选箭头 | 只读展示/可点击跳转 | `justify-between` 展示行，整行 `@click` |
-| 标题 + 右侧「查看全部 >」 | 操作入口 | `justify-between`，右侧 `@click` |
-| 独立不带 label 的输入区域 | 可编辑输入 | 直接 `DuInput` 不套 Form |
+| `TEXT` | — | 保留文本，绑定变量 |
+| `FRAME` | — | 容器，保留布局样式 |
+| `GROUP` | 子节点全是 VECTOR/RECTANGLE | 整体视为图标/装饰，替换为 SVG 或删除 |
+| `GROUP` | 子节点含 TEXT/FRAME | 普通分组，保留或展开 |
+| `ICON` | — | 替换为项目图标组件 |
+| `INSTANCE` / `COMPONENT` | — | 按映射表查找组件 |
+| `VECTOR` | 在 GROUP 内 | 随父级 GROUP 整体处理 |
+| `VECTOR` | 独立 + 有 border 样式 | 用 CSS border 实现（如选中态边框） |
+| `VECTOR` | 独立 + 纯填充 | 装饰元素，通常可删除 |
+| `RECTANGLE` | 有 `figma-image:unknown` | 替换为 `<DuImage>` |
+| `RECTANGLE` | 名字含 `Border` | 合并到父容器 border 样式 |
+| `RECTANGLE` | 其他纯色块 | 用 CSS background 实现 |
+| `ELLIPSE` | — | 用 `rounded-full` 实现 |
 
-**重要**：「请输入」「请选择」是 placeholder 文字，代表这是输入字段，必须用 `DuInput` / `DuSelect`，不能生成为普通 `span`。
+### 组件映射判断流程（按优先级）
 
-**Form 结构识别**：
+**第一层：emoji 前缀识别**
 
-满足以下条件时，用项目的 Form 组件包裹（具体组件和 props 参考 `figma-context.md`）：
-- 连续多个 `label + 输入框` 行，且 label 宽度视觉上一致
-- 或节点名中包含 `FormItem` / `Form` 关键词
+| Figma 原名前缀 | 走哪个映射表 | 说明 |
+|---|---|---|
+| `👻` | `business/_catalog.md` | 业务组件 |
+| `💙` | `components/_catalog.md` aliases | UI 库基础组件 |
+| 无 emoji | 尝试 `business/_catalog.md` aliases | 原子组件或未分类 |
 
-`DuForm` 自带行间分割线和布局，内部不需要再手动加 `DuDivider`。不满足时（只有 1-2 个零散输入框）直接用 `DuInput`，不强制套 Form。
+**第二层：映射表查询**
 
-**第四步：翻译主组件（暂不写入文件）**
+| 映射表状态 | 处理方式 |
+|---|---|
+| 有路径记录 | 直接 import 对应组件，不递归 |
+| 有路径 `-` | 使用 UI 库原生组件，不递归 |
+| 无记录 | 询问用户是否生成 |
 
-> **⚠️ 禁止在此步骤写入文件，必须先完成第五步的询问**
+> **注意**：`components/_catalog.md` aliases 是模糊匹配，`business/_catalog.md` 是精确匹配前缀。
 
-翻译完成后，将代码**暂存在内存中**，不要写入文件，继续执行第五步。
+### 具体翻译规则
 
-**第五步：询问未识别的子组件（必须执行）**
+- INSTANCE 标签 → 按 emoji 判断走对应映射表，映射为项目真实组件
+- COMPONENT_SET 子节点（变体）：优先用**父级名称**映射，子节点名作为 props 传递
+  - 例：`💙 01.00_Status Bar` 的子节点 `ColorDefaultTypeiPhone5s` → `StatusBar` + `type="iPhone5s"`
+  - 变体名中含 `ColorDefault`/`ColorWhite` → 提取为 `color` prop
+- `data-type="ICON"` → 替换为项目图标方案（如 `<img :src="getIconUrl('wifi')" />`）
+- 原始颜色/尺寸 → 替换为项目 token
+- 容器宽度 → 改为 `w-full` 或框架对应的全宽写法
+- 静态文字 → 改为变量绑定，交互元素加事件占位
 
-> **⚠️ 强制规则：必须询问用户，禁止跳过**
-> - 不管未识别的组件有多少个（即使 100+），都**必须询问用户**
-> - **禁止**自己决定「太多了，用 div 占位」
-> - 必须等用户回复后才能继续第六步
+**第五步：输出组件**
 
-检查骨架中所有带 `<!-- figma-node: xxx -->` 注释的标签，统计未识别的组件（未命中 `aliases` 且未命中业务组件映射表的）：
+- 指定了目标路径 → 写入文件
+- 未指定 → 输出到对话，由用户确认后保存
 
-1. **去重并统计**：按组件名去重，统计每个组件出现的次数
+**第六步：处理未识别的子组件（递归生成）**
 
-2. **一次性列出所有未识别组件**，询问用户：
+翻译完成后，检查骨架中所有带 `<!-- figma-node: xxx -->` 注释的标签，按 emoji 前缀分类处理：
 
-   > 发现以下未识别的业务组件（已去重）：
-   > 
-   > | 组件名 | 出现次数 | figma-node（取第一个） |
-   > |--------|----------|------------------------|
-   > | IslandsPinBasic | 6 | 14210:714409 |
-   > | FeedPost | 7 | 18215:29049 |
-   > | ... | ... | ... |
-   > 
-   > 请告知：
-   > 1. 哪些需要生成？（列出组件名）
-   > 2. 保存路径格式？（如 `docs/business/{ComponentName}.vue`）
-   > 3. 输入「全部跳过」则用占位 div 处理
+### 6.1 💙 前缀节点（UI 库组件）
 
-3. **等待用户回复**，根据用户选择：
-   - 用户指定要生成的组件 → 记录下来，第六步处理
-   - 用户说「全部跳过」→ 所有未识别组件用占位 div 处理
-   - 用户指定部分生成、部分跳过 → 按用户要求处理
+未命中 `components/_catalog.md` aliases 时：
 
-**第六步：写入文件（用户确认后执行）**
+> 发现未识别的 UI 库组件 `<ComponentName>`（figma-node: xxx），
+> - 是否需要生成？ → 用 CLI 获取骨架，按第四步规则翻译
+> - 或输入「跳过」→ 保留占位标签
 
-1. **生成用户要求的子组件**（如有）：
-   - 用该组件的 `figma-node` id 重新执行 CLI（保持与主组件相同的 `--tokens` 参数）：
-     ```bash
-     npx figma-to-code <原始fileKey对应的url>&node-id=<componentId> --framework=vue --tokens=<同上>
-     ```
-   - 对新骨架重复第三步的翻译流程
-   - 将结果写入用户指定路径
-   - 在 `figma-context.md` 的「业务组件映射」表中补充该条记录：
-     ```
-     | ComponentName | `ComponentName` | src/components/ComponentName.vue | 已生成 |
-     ```
+### 6.2 👻 前缀节点（业务组件）
 
-2. **更新主组件代码**：
-   - 将已生成的子组件替换为真实组件引用
-   - 未生成的子组件用占位 div 处理
-   - 在 `<script setup>` 中补充所有 import
+未命中 `business/_catalog.md` 时：
 
-3. **写入主组件文件**：
-   - 指定了目标路径 → 写入文件
-   - 未指定 → 输出到对话，由用户确认后保存
+> 发现未识别的业务组件 `<ComponentName>`（figma-node: xxx），是否需要生成？如需要，请告知保存路径。
 
-4. **输出完成摘要**：列出已生成的所有文件路径
+**用户确认路径后**：
+- 用该组件的 `figma-node` id 重新执行 CLI
+- 对新骨架重复第四步的翻译流程
+- 将结果写入用户指定路径
+- 在 `business/_catalog.md` 补充记录
+- 回到主组件，将对应标签替换为真实组件，补充 import
+
+**用户跳过** → 保留占位标签，不处理
+
+所有子组件处理完毕后，**输出最终完整的组件代码**。

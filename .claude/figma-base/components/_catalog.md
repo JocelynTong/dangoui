@@ -1,0 +1,142 @@
+---
+uiLib: dangoui
+prefix: Du
+version: 0.7.0
+---
+
+# 组件索引
+
+> 本文件继承 `commands/components/_catalog.md`（基模板），通用规则自动生效。
+> 基模板未覆盖的内容（如通用 aliases、跨平台映射）在下方补充。
+
+---
+
+## aliases（Figma 节点名 → 组件名）
+
+| Figma 节点名 | 映射为 |
+|---|---|
+| Icon | DuIcon |
+| Arrow | DuIcon |
+| Chevron | DuIcon |
+| Close | DuIcon |
+| IconButton | DuIconButton |
+| Button | DuButton |
+| ActionButton | DuActionButton |
+| Input | DuInput |
+| InputNumber | DuInputNumber |
+| Textarea | DuTextarea |
+| Form | DuForm |
+| FormItem | DuFormItem |
+| FormField | DuFormField |
+| Select | DuSelect |
+| Picker | DuPicker |
+| PickerView | DuPickerView |
+| Cascader | DuCascader |
+| Calendar | DuCalendar |
+| Dropdown | DuDropdown |
+| Popup | DuPopup |
+| Dialog | DuDialog |
+| ActionSheet | DuActionSheet |
+| NavigationBar | DuNavigationBar |
+| NavBar | DuNavigationBar |
+| Search | DuSearch |
+| SearchBar | DuSearch |
+| SearchRight | DuSearchRight |
+| Tabs | DuTabs |
+| Tab | DuTab |
+| TabPane | DuTabPane |
+| TabsRight | DuTabsRight |
+| Image | DuImage |
+| Avatar | DuAvatar |
+| AvatarGroup | DuAvatarGroup |
+| Badge | DuBadge |
+| Swiper | DuSwiper |
+| SwiperItem | DuSwiperItem |
+| Card | DuCard |
+| Empty | DuEmpty |
+| Skeleton | DuSkeleton |
+| SkeletonAvatar | DuSkeletonAvatar |
+| SkeletonParagraph | DuSkeletonParagraph |
+| SkeletonRectangle | DuSkeletonRectangle |
+| ToastProvider | DuToastProvider |
+| Snackbar | DuSnackbar |
+| NoticeBar | DuNoticeBar |
+| Checkbox | DuCheckbox |
+| CheckboxGroup | DuCheckboxGroup |
+| Radio | DuRadio |
+| RadioGroup | DuRadioGroup |
+| RadioIcon | DuRadioIcon |
+| Tag | DuTag |
+| Switch | DuSwitch |
+| Upload | DuUpload |
+| Divider | DuDivider |
+| Rate | DuRate |
+| Sticky | DuSticky |
+| TagsPanel | DuTagsPanel |
+| Tooltip | DuTooltip |
+| Steps | DuSteps |
+| Theme | DuTheme |
+| Transition | DuTransition |
+
+## components（组件名 → 规则文件）
+
+| 组件名 | 规则文件 |
+|---|---|
+| DuIcon | icon.md |
+| DuIconButton | icon.md |
+| DuButton | button.md |
+| DuActionButton | navigation.md |
+| DuInput | input.md |
+| DuInputNumber | input.md |
+| DuTextarea | input.md |
+| DuSearch | navigation.md |
+| DuSearchRight | navigation.md |
+| DuForm | form.md |
+| DuFormItem | form.md |
+| DuFormField | form.md |
+| DuSelect | select.md |
+| DuPicker | picker.md |
+| DuPickerView | picker.md |
+| DuCascader | picker.md |
+| DuCalendar | picker.md |
+| DuPopup | popup.md |
+| DuDialog | dialog.md |
+| DuActionSheet | dialog.md |
+| DuNavigationBar | navigation.md |
+| DuNavigationBarRight | navigation.md |
+| DuTabs | tabs.md |
+| DuTab | tabs.md |
+| DuTabPane | tabs.md |
+| DuTabsRight | tabs.md |
+| DuImage | image.md |
+| DuAvatar | image.md |
+| DuAvatarGroup | image.md |
+| DuBadge | badge.md |
+| DuSwiper | swiper.md |
+| DuSwiperItem | swiper.md |
+| DuCard | list.md |
+| DuEmpty | list.md |
+| DuSkeleton | skeleton.md |
+| DuSkeletonAvatar | skeleton.md |
+| DuSkeletonParagraph | skeleton.md |
+| DuSkeletonRectangle | skeleton.md |
+| DuToastProvider | feedback.md |
+| DuSnackbar | feedback.md |
+| DuNoticeBar | feedback.md |
+| DuCheckbox | checkbox.md |
+| DuCheckboxGroup | checkbox.md |
+| DuRadio | checkbox.md |
+| DuRadioGroup | checkbox.md |
+| DuRadioIcon | checkbox.md |
+| DuTag | misc.md |
+| DuSwitch | misc.md |
+| DuUpload | misc.md |
+| DuDivider | misc.md |
+| DuRate | misc.md |
+| DuDropdown | misc.md |
+| DuSticky | misc.md |
+| DuTagsPanel | misc.md |
+| DuTooltip | misc.md |
+| DuSteps | misc.md |
+| DuTheme | misc.md |
+| DuTransition | misc.md |

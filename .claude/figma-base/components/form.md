@@ -1,10 +1,41 @@
+---
+uiLib: dangoui
+prefix: Du
+version: 0.7.0
+---
+
 # 表单
+
+## 展示行 vs 输入框
+
+核心判断依据是**右侧内容类型**：
+
+| 视觉特征 | 右侧内容 | 应生成 |
+|---|---|---|
+| label + 「请输入xxx」/「请选择」灰色文字 | placeholder | DuFormItem + DuInput / DuSelect |
+| label + 实际数据 + 可选箭头 | 只读值 | `justify-between` 展示行，整行 `@click` |
+| 标题 + 「查看全部 >」 | 操作入口 | `justify-between`，右侧 `@click` |
+| 独立输入区域（无 label） | 可编辑 | 直接 DuInput，不套 DuForm |
+
+**重要**：「请输入」「请选择」是 placeholder，用 DuInput / DuSelect 生成。
+
+---
+
+## Form 结构识别
+
+满足以下条件时用 DuForm 包裹：
+- 连续多个 `label + 输入框` 行，且 label 宽度视觉一致
+- 或节点名包含 `FormItem`/`Form` 关键词
+
+**规则**：
+- DuForm 自带行间分割线，内部不需要手动加 DuDivider
+- 单个输入框或无 label 的输入框直接用 DuInput，不套 DuForm
+
+---
 
 **展示行 vs 输入框判断规则：**
 
 > **只有单个输入框、或没有 label 的输入框，直接用 `DuInput`，禁止套 `DuForm`。**
-
-连续多个「label + 输入框」行，且 label 宽度视觉一致时，才用 `DuForm` + `DuFormItem` 包裹。
 
 ## DuForm
 

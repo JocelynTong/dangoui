@@ -4,6 +4,8 @@ import { DuIcon } from 'dangoui'
 defineProps<{
   icon?: string
   image?: string
+  hasImage?: boolean
+  hasSpu?: boolean
   name?: string
 }>()
 </script>
@@ -12,6 +14,7 @@ defineProps<{
   <div class="bg-[var(--bg-2,#f7f7f9)] rounded-8px flex gap-4px items-center py-4px pl-4px pr-8px h-40px shrink-0">
     <div class="flex gap-10px justify-end items-center w-28px h-32px">
       <img v-if="image" :src="image" class="w-24px h-32px rounded-4px object-cover" />
+      <div v-else-if="hasImage || hasSpu" class="w-24px h-32px rounded-4px bg-[var(--bg-4,#ededf2)]" />
       <DuIcon v-else-if="icon" :name="icon" :size="20" />
       <slot v-else name="icon" />
     </div>
