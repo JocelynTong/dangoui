@@ -1,0 +1,19 @@
+.du-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+
+  &--inline {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    row-gap: 6px;
+    column-gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  &--custom {
+    display: block;
+    align-items: start;
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "dangoui-design-token",
+  "version": "1.0.25",
+  "description": "",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "typings/theme.d.ts",
+  "scripts": {
+    "dts": "tsc -p tsconfig.declaration.json --declaration --emitDeclarationOnly",
+    "build": "pnpm run dts && vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "zhuscat",
+  "license": "ISC",
+  "dependencies": {
+    "@unocss/core": "^0.57.3",
+    "chroma-js": "^2.4.2",
+    "lodash-es": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/chroma-js": "^2.4.3"
+  }
+}

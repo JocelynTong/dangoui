@@ -1,0 +1,155 @@
+.du-tag {
+  // TODO: 这些应该可以通过色板配置自动生成
+  --du-c-primary-tag: var(--du-primary-color);
+  --du-c-primary-tag-soft-bg: var(--du-primary-soft-bg);
+  --du-c-primary-tag-solid-text: #fff;
+
+  --du-c-secondary-tag: var(--du-secondary-color);
+  --du-c-secondary-tag-soft-bg: var(--du-secondary-soft-bg);
+  --du-c-primary-tag-solid-text: #fff;
+
+  --du-c-success-tag: var(--du-success-color);
+  --du-c-success-tag-soft-bg: var(--du-success-soft-bg);
+  --du-c-success-tag-solid-text: #fff;
+
+  --du-c-warning-tag: var(--du-warning-color);
+  --du-c-warning-tag-soft-bg: var(--du-warning-soft-bg);
+  --du-c-warning-tag-solid-text: #fff;
+
+  --du-c-error-tag: var(--du-error-color);
+  --du-c-error-tag-soft-bg: var(--du-error-soft-bg);
+  --du-c-error-tag-solid-text: #fff;
+
+  --du-c-default-tag: var(--du-default-color);
+  --du-c-default-tag-soft-bg: var(--du-default-soft-bg);
+  --du-c-default-tag-solid-text: #fff;
+
+  
+  border-radius: 4px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+
+  &--solid {
+    background: var(--du-c-tag);
+    color: var(--du-c-tag-solid-text);
+    border: 0 solid var(--du-c-tag);
+  }
+
+  &--soft {
+    background: var(--du-c-tag-soft-bg);
+    color: var(--du-c-tag);
+    border: 0 solid var(--du-c-tag);
+  }
+
+  &--ghost {
+    background-color: transparent;
+    color: var(--du-c-tag);
+    border: 1px solid var(--du-c-tag);
+  }
+
+  &--bordered {
+    border-width: 1px;
+  }
+
+  &--round {
+    border-radius: 1000px;
+  }
+
+  &__close {
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__close--mini {
+    margin-left: 2px;
+    height: 12px;
+  }
+
+  &__close--small {
+    height: 12px;
+  }
+
+  &__close--normal {
+    height: 12px;
+  }
+
+  &__close--medium {
+    height: 12px;
+  }
+
+  &__close--large {
+    height: 14px;
+  }
+
+  &__icon {
+    margin-right: 4px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__icon--mini {
+    margin-right: 2px;
+    height: 11px;
+  }
+
+  &__icon--small {
+    height: 12px;
+  }
+
+  &__icon--normal {
+    height: 12px;
+  }
+
+  &__icon--medium {
+    height: 12px;
+  }
+
+  &__icon--large {
+    height: 14px;
+  }
+
+  &--mini {
+    font-size: 10px;
+    line-height: 15px;
+    height: 15px;
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+
+  &--small {
+    font-size: 12px;
+    line-height: 18px;
+    padding: 1px 4px;
+    height: 20px;
+  }
+
+  &--normal {
+    font-size: 12px;
+    line-height: 18px;
+    padding: 3px 8px;
+    height: 24px;
+  }
+
+  &--medium {
+    font-size: 12px;
+    line-height: 18px;
+    padding: 5px 12px;
+    height: 28px;
+  }
+
+  &--large {
+    font-size: 14px;
+    line-height: 22px;
+    padding: 9px 12px;
+    height: 40px;
+  }
+  &--weight-light {
+    font-weight: 400;
+  }
+  &--weight-normal {
+    font-weight: 500;
+  }
+
+}

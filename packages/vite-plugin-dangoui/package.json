@@ -1,0 +1,34 @@
+{
+  "name": "vite-plugin-dangoui",
+  "version": "1.0.193",
+  "description": "",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "default": "./dist/index.mjs"
+      },
+      "default": {
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "zhuscat",
+  "license": "ISC",
+  "dependencies": {
+    "dangoui": "workspace:^",
+    "dangoui-design-token": "workspace:^",
+    "fast-glob": "^3.3.2",
+    "magic-string": "^0.30.5"
+  }
+}

@@ -1,0 +1,80 @@
+.du-tab-item {
+  height: 28px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--du-text-3);
+  position: relative;
+  white-space: nowrap;
+
+  &::after {
+    width: 28px;
+    height: 24px;
+    bottom: 4px;
+  }
+
+  &--large {
+    height: 32px;
+    font-size: 16px;
+    line-height: 24px;
+
+    &::after {
+      width: 32px;
+      height: 30px;
+      bottom: 4px;
+    }
+  }
+
+  &--active {
+    color: var(--du-text-1);
+    font-weight: 500;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 13px;
+      height: 3px;
+      background: var(--du-tabs-active-color);
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+    }
+  }
+
+  &--large-active {
+    &::after {
+      width: 20px;
+      height: 4px;
+    }
+  }
+
+  &--custom-active {
+    color: var(--du-text-1);
+    font-weight: 500;
+
+    &::after {
+      content: '';
+      position: absolute;
+      background-size: contain;
+      left: 50%;
+      transform: translateX(-50%);
+      background-image: var(--du-tabs-indicator-url);
+    }
+  }
+
+  &__text {
+    color: var(--du-text-2);
+    font-size: 12px;
+    line-height: 18px;
+    white-space: nowrap;
+
+    &--large {
+      font-size: 16px;
+      line-height: 22px;
+    }
+
+    &--active {
+      color: var(--du-tabs-active-color);
+    }
+  }
+}

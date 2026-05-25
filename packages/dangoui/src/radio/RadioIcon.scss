@@ -1,0 +1,35 @@
+.du-radio {
+  &__radio {
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: content-box;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+
+    &--checked {
+      border-color: var(--du-radio-bg);
+      &::after {
+        // 用 absolute 视觉上会有一点偏差
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        display: block;
+        content: '';
+        background: var(--du-radio-bg);
+      }
+    }
+
+    &--disabled {
+      background: rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      &::after {
+        background: var(--du-radio-disabled-bg);
+      }
+    }
+  }
+}

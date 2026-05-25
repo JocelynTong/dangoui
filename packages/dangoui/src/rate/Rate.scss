@@ -1,0 +1,91 @@
+.du-rate {
+  position: relative;
+
+  &__unselected, &__left-container {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+
+    &--unselected {
+      color: #D4D0DA;
+    }
+
+  }
+  &__item {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+  }
+  &__flex-row {
+    display: flex;
+    flex-direction: row;
+  }
+
+  &__left-half {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    z-index: 1;
+    top: 0;
+    overflow: hidden;
+  }
+  &__container {
+    &--mini,
+    &--small,
+    &--normal,
+    &--medium,
+    &--large {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+    }
+    &--large {
+      gap: 8px;
+    }
+  }
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.3);
+  }
+  50% {
+    transform: scale(1);
+  }
+  75% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+

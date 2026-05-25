@@ -1,0 +1,128 @@
+.du-navigation-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  padding: 6px 7px;
+  overflow: hidden;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: var(--du-c-navigation-bar-text);
+    font-weight: 500;
+    line-height: 24px;
+    margin-right: 8px;
+    flex: auto;
+    width: 0;
+    height: 100%;
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    flex: auto;
+    column-gap: 8px;
+
+    &--center {
+      position: absolute;
+      left: 50%;
+    }
+
+    & > view:not([class]) {
+      display: flex;
+      align-items: center;
+      column-gap: 8px;
+      height: 100%;
+      flex: auto;
+    }
+  }
+
+  &__back {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    padding-right: 8px;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  &__right {
+    display: flex;
+    flex: none;
+    align-items: center;
+    column-gap: 8px;
+    justify-content: flex-end;
+    color: var(--du-c-navigation-bar-text);
+
+    & > view:not([class]) {
+      display: flex;
+      align-items: center;
+      column-gap: 8px;
+      flex: auto;
+      height: 100%;
+    }
+  }
+
+  &__share {
+    width: 30px;
+    height: 30px;
+    // border: 1px solid var(--du-c-b-primary);
+    border: 1px solid var(--du-c-navigation-bar-border);
+    border-radius: 1000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    // background-color: transparent;
+    // background-color: rgba(255, 255, 255, 0.12);
+    background: none;
+    flex: none;
+  }
+
+  &__wrapper,
+  &_wrapper {
+    margin-top: var(--window-top, 0px);
+  }
+
+  &__wrapper {
+    --du-c-primary-navigation-bar-text: #fff;
+    --du-c-primary-navigation-bar-bg: rgba(
+      var(--du-primary-solid-bg-channel),
+      var(--du-nav-bar-op)
+    );
+    --du-c-primary-navigation-bar-border: rgba(255, 255, 255, 0.12);
+
+    --du-c-secondary-navigation-bar-text: #fff;
+    --du-c-secondary-navigation-bar-bg: rgba(
+      var(--du-secondary-solid-bg-channel),
+      var(--du-nav-bar-op)
+    );
+    --du-c-secondary-navigation-bar-border: rgba(255, 255, 255, 0.12);
+
+    --du-c-default-navigation-bar-text: var(--du-text-1);
+    --du-c-default-navigation-bar-bg: rgba(
+      var(--du-c-bg-2-channel),
+      var(--du-nav-bar-op)
+    );
+    --du-c-default-navigation-bar-border: rgba(0, 0, 0, 0.12);
+
+    --du-c-white-navigation-bar-text: var(--du-text-1);
+    --du-c-white-navigation-bar-bg: rgba(255, 255, 255, var(--du-nav-bar-op));
+    --du-c-white-navigation-bar-border: rgba(0, 0, 0, 0.12);
+
+    box-sizing: content-box;
+    background-color: var(--du-c-navigation-bar-bg);
+
+    position: relative;
+
+    &--fixed {
+      position: fixed;
+      // TODO: 统一规划 z-index
+      z-index: 9999;
+      left: 0;
+      top: 0;
+    }
+  }
+}

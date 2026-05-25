@@ -1,0 +1,39 @@
+.du-snackbar {
+  width: 365px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--du-secondary-solid-color);
+  background-color: var(--du-secondary-solid-bg);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  &__left {
+    display: flex;
+    align-items: center;
+    &__icon {
+      margin-right: 8px;
+      font-size: 16px;
+    }
+    &__image {
+      margin-right: 8px;
+      overflow: hidden;
+    }
+  }
+  &__content {
+    flex: auto;
+  }
+
+  &__close {
+    line-height: 1;
+    margin-left: 12px;
+    display: flex;
+    align-items: center;
+    &__icon {
+      font-size: 9px;
+      color: var(--du-secondary-solid-color);
+    }
+  }
+}

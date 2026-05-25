@@ -1,0 +1,61 @@
+.du-checkbox {
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+
+  font-size: 14px;
+  line-height: 24px;
+
+  &__label {
+    flex: 1 0 0;
+  }
+
+  &--left {
+    flex-direction: row-reverse;
+  }
+
+  &--inline {
+    display: inline-flex;
+    flex-wrap: wrap;
+    width: auto;
+  }
+
+  &--disabled {
+    opacity: 0.6;
+  }
+
+  &__card {
+    position: relative;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    padding: 2px;
+    overflow: hidden;
+    transition: border 0.2s;
+
+    &--selected {
+      border: 1px solid var(--du-primary-4);
+    }
+  }
+
+  &__card-inner {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  &__card-label {
+    padding: 16px;
+  }
+
+  &__card-icon {
+    position: absolute;
+    top: 4px;
+
+    &--right {
+      right: 4px;
+    }
+
+    &--left {
+      left: 4px;
+    }
+  }
+}

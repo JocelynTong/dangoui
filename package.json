@@ -1,0 +1,35 @@
+{
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "pnpm -r --filter=./packages/* run build",
+    "prepublishOnly": "pnpm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "sync": "cnpm sync dangoui-design-token && cnpm sync vite-plugin-dangoui && cnpm sync dangoui && cnpm sync dangoui-icon-config",
+    "release": "pnpm run build && changeset publish --tag latest"
+  },
+  "keywords": [],
+  "author": "zhuscat",
+  "license": "ISC",
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@types/node": "^20.9.4",
+    "@vitejs/plugin-vue": "^4.5.0",
+    "@vue/test-utils": "^2.4.4",
+    "prettier": "3.1.0",
+    "typescript": "^5.3.2",
+    "vite": "^5.0.2",
+    "vitest": "^1.3.1",
+    "vue": "^3.3.8"
+  },
+  "packageManager": "pnpm@8.6.1",
+  "dependencies": {
+    "@frontend/figma-to-code": "link:/Users/jocelyn/Downloads/figma-to-code"
+  }
+}

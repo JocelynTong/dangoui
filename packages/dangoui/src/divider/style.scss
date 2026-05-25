@@ -1,0 +1,42 @@
+.du-divider {
+  flex: none;
+  display: flex;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.05);
+
+  &--vertical {
+    width: 1px;
+    background-color: currentColor;
+    height: calc(100% - 6px);
+    margin-top: 3px;
+  }
+
+  &--horizontal {
+    width: calc(100% - 6px);
+    margin-left: 3px;
+  }
+
+  &__left {
+    flex: auto;
+    height: 1px;
+    background-color: currentColor;
+  }
+
+  &__right {
+    flex: auto;
+    height: 1px;
+    background-color: currentColor;
+  }
+
+  &__content {
+    padding: 0 12px;
+    color: var(--du-c-text-3);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+
+    &:empty {
+      display: none;
+    }
+  }
+}

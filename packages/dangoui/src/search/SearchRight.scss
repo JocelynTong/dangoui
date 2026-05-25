@@ -1,0 +1,10 @@
+.du-search-right {
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  height: 100%;
+
+  & > du-divider {
+    height: 100%;
+  }
+}
