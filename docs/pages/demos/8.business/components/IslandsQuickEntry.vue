@@ -1,96 +1,95 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { DuIcon } from 'dangoui'
 import IslandsQuickEntryTitle from './IslandsQuickEntryTitle.vue'
 import IslandsQuickEntryInfo from './IslandsQuickEntryInfo.vue'
 
 const props = withDefaults(defineProps<{
-  count?: number
-  entries?: Array<{
-    id: string
-    type: string
-    caption?: string
-    price?: string
-    tag?: string
-    tagValue?: string
-    tagSuffix?: string
-    icon?: string
-  }>
+  items?: any[]
+  /** 布局模式: 'scroll' | 'grid' | 'auto'（自动根据数量判断） */
+  layout?: 'scroll' | 'grid' | 'auto'
 }>(), {
-  count: 9,
-  entries: () => [
-    { id: '1', type: '闲置', caption: '描述文案', price: '¥9999', tag: '降价', tagValue: '0.8%', icon: 'trending-down-filled' },
-    { id: '2', type: '闪购', caption: '描述文案', price: '¥9999', tag: '降价', tagValue: '0.8%', icon: 'trending-down-filled' },
-    { id: '3', type: '拍卖', caption: '描述文案', price: '¥9999', tag: '剩', tagValue: '5', tagSuffix: '分钟' },
-    { id: '4', type: '福袋', caption: '描述文案', price: '¥9999', tag: '剩', tagValue: '2/999', tagSuffix: '款' },
-    { id: '5', type: '拼团', caption: '描述文案', price: '¥9999', tag: '共', tagValue: '999', tagSuffix: '款' },
-    { id: '6', type: '拼车', caption: '描述文案', price: '¥9999', tag: '明天', tagValue: '12:00', tagSuffix: '人' },
-    { id: '7', type: '商城', caption: '描述文案', price: '¥9999' },
-    { id: '8', type: '日历', caption: '描述文案', price: '¥9999', tag: '明天', tagValue: '12:00' },
-    { id: '9', type: '聊天室', caption: '描述文案' },
-  ],
+  layout: 'auto',
 })
 
-const visible = computed(() => props.entries.slice(0, props.count))
+// 计算实际布局：数量=4~9时使用grid布局（每行3个）
+const actualLayout = computed(() => {
+  if (props.layout === 'auto' || props.layout === undefined) {
+    const count = props.items?.length ?? 0
+    if (count >= 4 && count <= 9) return 'grid'
+    return 'scroll'
+  }
+  return props.layout
+})
 </script>
 
 <template>
-  <div
-    :class="{
-      'flex gap-[8px] px-[10px] overflow-x-auto': props.count === 1,
-      'flex gap-[8px] px-[10px]': props.count === 2 || props.count === 3,
-      'flex flex-col gap-[8px] px-[10px]': props.count >= 4,
-    }"
-  >
-    <template v-if="props.count >= 4">
-      <div
-        v-for="(row, rowIdx) in Math.ceil(visible.length / 3)"
-        :key="rowIdx"
-        class="flex gap-[8px]"
-      >
-        <div
-          v-for="item in visible.slice(rowIdx * 3, rowIdx * 3 + 3)"
-          :key="item.id"
-          class="bg-[var(--bg-2)] rounded-[8px] flex flex-col gap-[8px] py-[8px] pl-[8px] flex-1"
-        >
-          <IslandsQuickEntryTitle :type="item.type" />
-          <div class="flex gap-[4px] items-center flex-1">
-            <div class="bg-[var(--icon-disabled)] rounded-[2px] w-[27px] h-[36px]" />
-            <IslandsQuickEntryInfo :caption="item.caption" />
-            <div class="flex flex-col gap-[4px] items-end">
-              <span class="text-[var(--error-5)] text-[16px] font-[900] leading-[24px]">{{ item.price }}</span>
+  <!-- 数量=4~9：网格布局（每行3个） -->
+  <div v-if="actualLayout === 'grid'" class="flex flex-wrap gap-[8px] px-[10px]">
+    <div
+      v-for="item in items"
+      :key="item.id"
+      class="bg-[var(--bg-2,#f7f7f9)] rounded-[8px] flex py-[8px] pl-[8px] shrink-0 w-[113px] gap-[8px]"
+    >
+      <!-- 左侧：Image -->
+      <div class="bg-[var(--icon-disabled,#d4d0da)] rounded-[2px] w-[27px] h-[36px] shrink-0" />
+
+      <!-- 右侧：标题 + Info -->
+      <div class="flex flex-col gap-[4px] flex-1 min-w-0">
+        <IslandsQuickEntryTitle :type="item.type" />
+        <IslandsQuickEntryInfo :caption="item.caption" />
+        <div class="flex items-center gap-[4px]">
+          <span v-if="item.price" class="text-[var(--error-5,#f96464)] text-[16px] font-[900] leading-[24px]">{{ item.price }}</span>
+          <template v-if="item.icon === 'trending-down-filled'">
+            <div class="bg-[var(--success-1,#e2f7e3)] rounded-[2px] flex items-center px-[2px]">
+              <span class="text-[var(--success-6,#379e45)] text-[10px] font-[500] leading-[11px]">↓ {{ item.tagValue }}</span>
             </div>
-          </div>
+          </template>
+          <template v-else-if="item.tag">
+            <div class="rounded-[2px] flex gap-[1px] items-center">
+              <span class="text-[var(--text-3,rgba(0,0,0,0.4))] text-[10px] font-[500] leading-[11px]">{{ item.tag }}</span>
+              <span class="text-[var(--text-1,#000000)] text-[10px] font-[500] leading-[11px]">{{ item.tagValue }}</span>
+              <span v-if="item.tagSuffix" class="text-[var(--text-3,rgba(0,0,0,0.4))] text-[10px] font-[500] leading-[11px]">{{ item.tagSuffix }}</span>
+            </div>
+          </template>
         </div>
       </div>
-    </template>
-    <template v-else>
-      <div
-        v-for="item in visible"
-        :key="item.id"
-        class="bg-[var(--bg-2)] rounded-[8px] flex flex-col gap-[8px] py-[8px] pl-[8px]"
-        :class="props.count === 1 ? 'w-[355px] shrink-0' : 'flex-1'"
-      >
+    </div>
+  </div>
+
+  <!-- 数量=1/2/3 或指定 scroll 布局：横向滚动 -->
+  <div v-else class="flex gap-[8px] px-[10px] overflow-x-auto">
+    <div
+      v-for="item in items"
+      :key="item.id"
+      class="bg-[var(--bg-2,#f7f7f9)] rounded-[8px] flex py-[8px] pl-[8px] shrink-0 w-[355px] gap-[8px]"
+    >
+      <!-- 左侧：Image -->
+      <div class="bg-[var(--icon-disabled,#d4d0da)] rounded-[2px] w-[27px] h-[36px] shrink-0" />
+
+      <!-- 右侧：标题 + Info -->
+      <div class="flex flex-col gap-[4px] flex-1 min-w-0">
         <IslandsQuickEntryTitle :type="item.type" />
-        <div class="flex gap-[4px] items-center flex-1">
-          <div class="bg-[var(--icon-disabled)] rounded-[2px] w-[27px] h-[36px]" />
-          <IslandsQuickEntryInfo :caption="item.caption" />
-          <div class="flex flex-col gap-[4px] items-end">
-            <span class="text-[var(--error-5)] text-[16px] font-[900] leading-[24px]">{{ item.price }}</span>
-            <div class="flex gap-[1px] items-center">
+        <div class="flex gap-[4px] items-center">
+          <div class="flex flex-col gap-[4px] flex-1 min-w-0">
+            <IslandsQuickEntryInfo :caption="item.caption" />
+            <div class="flex gap-[4px] items-center">
+              <span v-if="item.price" class="text-[var(--error-5,#f96464)] text-[16px] font-[900] leading-[24px]">{{ item.price }}</span>
               <template v-if="item.icon === 'trending-down-filled'">
-                <DuIcon name="trending-down-filled" class="w-[8px] h-[8px] text-[var(--success-6)]" />
-                <span class="text-[var(--success-6)] text-[10px] leading-[11px]">{{ item.tagValue }}</span>
+                <div class="bg-[var(--success-1,#e2f7e3)] rounded-[2px] flex items-center px-[2px]">
+                  <span class="text-[var(--success-6,#379e45)] text-[10px] font-[500] leading-[11px]">↓ {{ item.tagValue }}</span>
+                </div>
               </template>
               <template v-else-if="item.tag">
-                <span class="text-[var(--text-3)] text-[10px] leading-[11px]">{{ item.tag }}</span>
-                <span class="text-[var(--text-1)] text-[10px] leading-[11px]">{{ item.tagValue }}</span>
-                <span v-if="item.tagSuffix" class="text-[var(--text-3)] text-[10px] leading-[11px]">{{ item.tagSuffix }}</span>
+                <div class="rounded-[2px] flex gap-[1px] items-center">
+                  <span class="text-[var(--text-3,rgba(0,0,0,0.4))] text-[10px] font-[500] leading-[11px]">{{ item.tag }}</span>
+                  <span class="text-[var(--text-1,#000000)] text-[10px] font-[500] leading-[11px]">{{ item.tagValue }}</span>
+                  <span v-if="item.tagSuffix" class="text-[var(--text-3,rgba(0,0,0,0.4))] text-[10px] font-[500] leading-[11px]">{{ item.tagSuffix }}</span>
+                </div>
               </template>
             </div>
           </div>
         </div>
       </div>
-    </template>
+    </div>
   </div>
 </template>
