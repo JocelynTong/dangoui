@@ -92,7 +92,7 @@ const iframe = ref<HTMLIFrameElement>()
 // 设备尺寸规范（与 PhoneMockup.vue 保持一致，iPhone X/11 Pro/12 mini/13 mini）
 // Frame 396×838, Screen 375×812, iframe容器 418×812
 const previewHeight = ref(812) // iframe 高度 = Screen 高度
-const previewWidth = ref(418)  // iframe 宽度 = Screen(375) + padding(43)
+const previewWidth = ref(375)  // 纯屏幕宽度
 
 // props.path from MDC: content:${path}:${filename}:${demoIdx}
 // Content path in Nuxt Content strips N. prefix from both directory and filename.

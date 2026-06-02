@@ -18,7 +18,6 @@ import FeedPost from '../components/FeedPost.vue'
 import SPU from '../components/SPU.vue'
 import SPUBasic from '../components/SPUBasic.vue'
 import Price from '../components/Price.vue'
-import GridBasic from '../components/GridBasic.vue'
 import AvatarGrouped from '../components/AvatarGrouped.vue'
 import ButtonFAB from '../components/ButtonFAB.vue'
 import TabBar from '../components/TabBar.vue'
@@ -44,11 +43,14 @@ const gridItems = [
 ]
 
 const quickEntryItems = [
-  { type: '闲置', subtitle: 'Mega宇航员航员', price: '¥59.99', tag: '领券' },
-  { type: '闪购', subtitle: 'Mega宇航员航员', price: '¥59' },
-  { type: '拍卖', subtitle: '剩22时30分', price: '¥59.99' },
-  { type: '福袋', subtitle: '剩22/99款', price: '¥59.99' },
-  { type: '拼团', subtitle: '共999款', price: '¥59.99' },
+  { id: '1', type: '闲置', caption: 'Mega宇航员航员', price: '¥59.99', tag: '领券' },
+  { id: '2', type: '闪购', caption: 'Mega宇航员航员', price: '¥59', tag: '降价', tagValue: '0.8%', icon: 'trending-down-filled' },
+  { id: '3', type: '拍卖', caption: '剩22时30分', price: '¥59.99', tag: '剩', tagValue: '5', tagSuffix: '分钟' },
+  { id: '4', type: '福袋', caption: '剩22/99款', price: '¥59.99', tag: '剩', tagValue: '2/999', tagSuffix: '款' },
+  { id: '5', type: '拼团', caption: '共999款', price: '¥59.99', tag: '共', tagValue: '999', tagSuffix: '款' },
+  { id: '6', type: '拼车', caption: '明天12:00出发', tag: '缺', tagValue: '2', tagSuffix: '人' },
+  { id: '7', type: '商城', caption: 'Mega宇航员', price: '¥59.99' },
+  { id: '8', type: '日历', caption: '明天12:00', tag: '明天', tagValue: '12:00' },
 ]
 
 const feedTabs = ['推荐', '最新', '未选', '未选', '未选', '未选']
@@ -79,7 +81,7 @@ const tabBarItems = [
     </IslandsPin>
 
     <!-- Main Content -->
-    <div class="bg-[var(--bg-1,#ffffff)] rounded-12px flex flex-col gap-8px mt-8px p-8px">
+    <div class="bg-[var(--bg-1,#ffffff)] rounded-12px flex flex-col gap-8px mt-8px">
       <!-- Grid -->
       <IslandsGrid>
         <IslandsGridBasic
@@ -91,7 +93,7 @@ const tabBarItems = [
 
       <!-- Slide - Tags -->
       <IslandsSlide>
-        <GridBasic v-for="i in 7" :key="i" name="Tag Name" layout="vertical" />
+        <IslandsGridBasic v-for="i in 7" :key="i" name="Tag Name" />
       </IslandsSlide>
 
       <!-- Slide - SPUs -->
